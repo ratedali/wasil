@@ -1,12 +1,16 @@
 import React from "react";
 import Chart from "chart.js";
 
-export default function CardLineChart() {
+export default function CardLineChart({
+  title, subtitle,
+  xlabel, labels,
+  ylabel, datasets
+}) {
   React.useEffect(() => {
     var config = {
       type: "line",
       data: {
-        labels: [
+        labels: labels ?? [
           "January",
           "February",
           "March",
@@ -15,7 +19,7 @@ export default function CardLineChart() {
           "June",
           "July",
         ],
-        datasets: [
+        datasets: datasets ?? [
           {
             label: new Date().getFullYear(),
             backgroundColor: "#4c51bf",
@@ -37,7 +41,7 @@ export default function CardLineChart() {
         responsive: true,
         title: {
           display: false,
-          text: "Sales Charts",
+          text: title ?? "Sales Charts",
           fontColor: "white",
         },
         legend: {
@@ -64,7 +68,7 @@ export default function CardLineChart() {
               display: true,
               scaleLabel: {
                 display: false,
-                labelString: "Month",
+                labelString: xlabel ?? "Month",
                 fontColor: "white",
               },
               gridLines: {
@@ -86,7 +90,7 @@ export default function CardLineChart() {
               display: true,
               scaleLabel: {
                 display: false,
-                labelString: "Value",
+                labelString: ylabel ?? "Value",
                 fontColor: "white",
               },
               gridLines: {
@@ -104,8 +108,12 @@ export default function CardLineChart() {
       },
     };
     var ctx = document.getElementById("line-chart").getContext("2d");
-    window.myLine = new Chart(ctx, config);
-  }, []);
+    new Chart(ctx, config);
+  }, [
+    title, subtitle,
+    xlabel, labels,
+    ylabel, datasets,
+  ]);
   return (
     <>
       <div className="relative flex flex-col min-w-0 break-words w-full mb-6 shadow-lg rounded bg-blueGray-700">
@@ -113,9 +121,9 @@ export default function CardLineChart() {
           <div className="flex flex-wrap items-center">
             <div className="relative w-full max-w-full flex-grow flex-1">
               <h6 className="uppercase text-blueGray-100 mb-1 text-xs font-semibold">
-                Overview
+                {subtitle ?? "Overview"}
               </h6>
-              <h2 className="text-white text-xl font-semibold">Sales value</h2>
+              <h2 className="text-white text-xl font-semibold">{title ?? "Sales Value"}</h2>
             </div>
           </div>
         </div>

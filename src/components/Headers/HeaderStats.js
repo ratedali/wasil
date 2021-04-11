@@ -8,21 +8,21 @@ export default function HeaderStats() {
   return (
     <>
       {/* Header */}
-      <div className="relative bg-lightBlue-600 md:pt-32 pb-32 pt-12">
+      <div className="relative bg-gradient-to-br from-purple-600 to-lightBlue-600 md:pt-32 pb-32 pt-12">
         <div className="px-4 md:px-10 mx-auto w-full">
           <div>
             {/* Card stats */}
             <div className="flex flex-wrap">
               <div className="w-full lg:w-6/12 xl:w-3/12 px-4">
                 <CardStats
-                  statSubtitle="TRAFFIC"
+                  statSubtitle="Active Users"
                   statTitle="350,897"
                   statArrow="up"
                   statPercent="3.48"
                   statPercentColor="text-emerald-500"
                   statDescripiron="Since last month"
-                  statIconName="far fa-chart-bar"
-                  statIconColor="bg-red-500"
+                  statIconName="fas fa-users"
+                  statIconColor="bg-red-600"
                 />
               </div>
               <div className="w-full lg:w-6/12 xl:w-3/12 px-4">
@@ -33,8 +33,8 @@ export default function HeaderStats() {
                   statPercent="3.48"
                   statPercentColor="text-red-500"
                   statDescripiron="Since last week"
-                  statIconName="fas fa-chart-pie"
-                  statIconColor="bg-orange-500"
+                  statIconName="fas fa-plus"
+                  statIconColor="bg-orange-600"
                 />
               </div>
               <div className="w-full lg:w-6/12 xl:w-3/12 px-4">
@@ -45,8 +45,8 @@ export default function HeaderStats() {
                   statPercent="1.10"
                   statPercentColor="text-orange-500"
                   statDescripiron="Since yesterday"
-                  statIconName="fas fa-users"
-                  statIconColor="bg-pink-500"
+                  statIconName="fas fa-dollar-sign"
+                  statIconColor="bg-indigo-600"
                 />
               </div>
               <div className="w-full lg:w-6/12 xl:w-3/12 px-4">
@@ -57,8 +57,8 @@ export default function HeaderStats() {
                   statPercent="12"
                   statPercentColor="text-emerald-500"
                   statDescripiron="Since last month"
-                  statIconName="fas fa-percent"
-                  statIconColor="bg-lightBlue-500"
+                  statIconName="fas fa-chart-line"
+                  statIconColor="bg-purple-600"
                 />
               </div>
             </div>

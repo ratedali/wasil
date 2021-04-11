@@ -12,10 +12,10 @@ export default function Dashboard() {
     <>
       <div className="flex flex-wrap">
         <div className="w-full xl:w-8/12 mb-12 xl:mb-0 px-4">
-          <CardLineChart />
+          <CardLineChart title="Order Revenue" subtitle="Monthly Overview" />
         </div>
         <div className="w-full xl:w-4/12 px-4">
-          <CardBarChart />
+          <CardBarChart title="Total Orders" subtitle="Monthly Performance" />
         </div>
       </div>
       <div className="flex flex-wrap mt-4">

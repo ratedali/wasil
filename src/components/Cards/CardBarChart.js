@@ -1,12 +1,16 @@
-import React from "react";
+import React, { useEffect } from "react";
 import Chart from "chart.js";
 
-export default function CardBarChart() {
-  React.useEffect(() => {
+export default function CardBarChart({
+  title, subtitle,
+  xlabel, labels,
+  ylabel, datasets
+}) {
+  useEffect(() => {
     let config = {
       type: "bar",
       data: {
-        labels: [
+        labels: labels ?? [
           "January",
           "February",
           "March",
@@ -15,7 +19,7 @@ export default function CardBarChart() {
           "June",
           "July",
         ],
-        datasets: [
+        datasets: datasets ?? [
           {
             label: new Date().getFullYear(),
             backgroundColor: "#ed64a6",
@@ -39,7 +43,7 @@ export default function CardBarChart() {
         responsive: true,
         title: {
           display: false,
-          text: "Orders Chart",
+          text: title ?? "Orders Chart",
         },
         tooltips: {
           mode: "index",
@@ -62,7 +66,7 @@ export default function CardBarChart() {
               display: false,
               scaleLabel: {
                 display: true,
-                labelString: "Month",
+                labelString: xlabel ?? "Month",
               },
               gridLines: {
                 borderDash: [2],
@@ -79,7 +83,7 @@ export default function CardBarChart() {
               display: true,
               scaleLabel: {
                 display: false,
-                labelString: "Value",
+                labelString: ylabel ?? "Value",
               },
               gridLines: {
                 borderDash: [2],
@@ -96,8 +100,12 @@ export default function CardBarChart() {
       },
     };
     let ctx = document.getElementById("bar-chart").getContext("2d");
-    window.myBar = new Chart(ctx, config);
-  }, []);
+    new Chart(ctx, config);
+  }, [
+    title, subtitle,
+    xlabel, labels,
+    ylabel, datasets,
+  ]);
   return (
     <>
       <div className="relative flex flex-col min-w-0 break-words bg-white w-full mb-6 shadow-lg rounded">
@@ -105,10 +113,10 @@ export default function CardBarChart() {
           <div className="flex flex-wrap items-center">
             <div className="relative w-full max-w-full flex-grow flex-1">
               <h6 className="uppercase text-blueGray-400 mb-1 text-xs font-semibold">
-                Performance
+                {subtitle ?? 'Performance'}
               </h6>
               <h2 className="text-blueGray-700 text-xl font-semibold">
-                Total orders
+                {title ?? 'Total Orders'}
               </h2>
             </div>
           </div>
