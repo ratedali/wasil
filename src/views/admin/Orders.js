@@ -1,7 +1,6 @@
 import CardTable from 'components/Cards/CardTable.js';
 import Cell from 'components/Table/Cell.js';
 import HeadingCell from 'components/Table/HeadingCell.js';
-import RowHeadingCell from 'components/Table/RowHeadingCell.js';
 import TableDropdown from 'components/Dropdowns/TableDropdown.js';
 import React from 'react';
 
