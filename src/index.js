@@ -10,7 +10,7 @@ import App from './App';
 import firebaseConfig from './firebaseConfig';
 
 ReactDOM.render(
-  <FirebaseAppProvider firebaseConfig={firebaseConfig}>
+  <FirebaseAppProvider firebaseConfig={firebaseConfig} suspense={true}>
     <App />
   </FirebaseAppProvider>,
   document.getElementById("root")

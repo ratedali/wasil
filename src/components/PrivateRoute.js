@@ -1,13 +1,19 @@
 import { Redirect, Route, useLocation } from 'react-router-dom';
-import { useAuth } from 'reactfire';
+import { AuthCheck } from 'reactfire';
+import { Suspense } from "react";
 
 export default function PrivateRoute(props) {
-    const auth = useAuth()
     const location = useLocation();
-    return (auth.currentUser
-        ? <Route {...props} />
-        : <Redirect to={{
-            pathname: '/auth/login', state: { from: location }
-        }} />
-    )
+    return (
+        <Suspense fallback={<div></div>}>
+            <AuthCheck fallback={
+                <Redirect to={{
+                    pathname: '/auth/login',
+                    state: { from: location },
+                }} /> 
+            }>
+                <Route {...props}/>
+            </AuthCheck>
+        </Suspense>
+    );
 }
