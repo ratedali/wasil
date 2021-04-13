@@ -116,7 +116,7 @@ export default function Sidebar() {
               {links.map(({ name, path, icon }) => {
                 const active = window.location.href.indexOf(path) !== -1;
                 return (
-                  <li className="items-center">
+                  <li className="items-center" key={path}>
                     <Link
                       className={classNames(
                         "text-xs uppercase py-3 font-bold block",

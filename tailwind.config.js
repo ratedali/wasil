@@ -73,6 +73,15 @@ module.exports = {
       backgroundSize: {
         full: "100%",
       },
+      animation: {
+        "loading": "loading 2s ease-in-out infinite",
+      },
+      keyframes: {
+        loading: {
+          '0%': { transform: 'translate(-100%)' },
+          '100%': { transform: 'translate(500%) ' }
+        }
+      }
     },
   },
   variants: [

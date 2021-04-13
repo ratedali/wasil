@@ -1,42 +1,59 @@
 import CardTable from 'components/Cards/CardTable.js';
+import TableDropdown from 'components/Dropdowns/TableDropdown.js';
+import LoadingBar from 'components/LoadingBar';
 import Cell from 'components/Table/Cell.js';
 import HeadingCell from 'components/Table/HeadingCell.js';
 import RowHeadingCell from 'components/Table/RowHeadingCell.js';
-import TableDropdown from 'components/Dropdowns/TableDropdown.js';
-import React from 'react';
-
+import { format } from 'date-fns/fp';
+import React, { Suspense } from 'react';
+import { useFirestore, useFirestoreCollectionData } from 'reactfire';
 
 export default function Drivers() {
   return (
     <>
       <div className="flex flex-wrap mt-4">
         <div className="w-full mb-12 px-4">
-          <CardTable>
+          <CardTable title="Fuel Delivery">
             <thead>
               <tr>
-                <HeadingCell>Customer</HeadingCell>
+                <HeadingCell>Driver</HeadingCell>
                 <HeadingCell>Joined At</HeadingCell>
-                <HeadingCell>Last Login</HeadingCell>
-                <HeadingCell>Order Status</HeadingCell>
+                <HeadingCell>Current Status</HeadingCell>
+                <HeadingCell>Available Fuel</HeadingCell>
                 <HeadingCell>Actions</HeadingCell>
               </tr>
             </thead>
-            <tbody>
-              <tr>
-                <RowHeadingCell avatar={require("assets/img/bootstrap.jpg").default}>Earl Simmons</RowHeadingCell>
-                <Cell>18 December 1970</Cell>
-                <Cell>09 April 2021</Cell>
-                <Cell>
-                  <i className="fas fa-circle text-emerald-500 mr-2"></i> FULFILED
-                </Cell>
-                <Cell action={true}>
-                  <TableDropdown />
-                </Cell>
-              </tr>
-            </tbody>
+            <Suspense fallback={<LoadingBar />}>
+              <DriverRows />
+            </Suspense>
           </CardTable>
         </div>
       </div>
     </>
+  );
+}
+
+function DriverRows() {
+  const query = useFirestore()
+    .collection('drivers')
+    .limit(10);
+  const { data: drivers } = useFirestoreCollectionData(query);
+  const formatDate = format('dd/MM/yyyy');
+  return (
+    <tbody>
+      {drivers.map(driver => (
+        <tr>
+          <RowHeadingCell avatar={require("assets/img/bootstrap.jpg").default}>{driver.name}</RowHeadingCell>
+          <Cell>{driver.joinedAt ? formatDate(driver.joinedAt.toDate()) : '-'}</Cell>
+          <Cell>
+            <i className="fas fa-circle text-emerald-500 mr-2"></i> AVAILABLE
+                    </Cell>
+          <Cell>595/1000 Liters</Cell>
+          <Cell action={true}>
+            <TableDropdown />
+          </Cell>
+        </tr>
+      ))}
+    </tbody>
   );
 }
