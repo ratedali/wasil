@@ -6,6 +6,7 @@ import HeadingCell from 'components/Table/HeadingCell.js';
 import RowHeadingCell from 'components/Table/RowHeadingCell.js';
 import { format } from "date-fns/fp";
 import React, { Suspense } from 'react';
+import { Link } from 'react-router-dom';
 import { useFirestore, useFirestoreCollectionData } from 'reactfire';
 
 
@@ -43,7 +44,7 @@ function CustomerRows() {
     <tbody>
       {customers.map(customer => (
         <tr key={customer.id}>
-          <RowHeadingCell avatar={require("assets/img/bootstrap.jpg").default}>{customer.name}</RowHeadingCell>
+          <RowHeadingCell avatar={require("assets/img/bootstrap.jpg").default}><Link to={`/admin/customers/${customer.id}`}>{customer.name}</Link></RowHeadingCell>
           <Cell>{customer.phone}</Cell>
           <Cell>{
             customer.joinedAt

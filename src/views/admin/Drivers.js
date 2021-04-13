@@ -6,6 +6,7 @@ import HeadingCell from 'components/Table/HeadingCell.js';
 import RowHeadingCell from 'components/Table/RowHeadingCell.js';
 import { format } from 'date-fns/fp';
 import React, { Suspense } from 'react';
+import { Link } from 'react-router-dom';
 import { useFirestore, useFirestoreCollectionData } from 'reactfire';
 
 export default function Drivers() {
@@ -43,7 +44,7 @@ function DriverRows() {
     <tbody>
       {drivers.map(driver => (
         <tr>
-          <RowHeadingCell avatar={require("assets/img/bootstrap.jpg").default}>{driver.name}</RowHeadingCell>
+          <RowHeadingCell avatar={require("assets/img/bootstrap.jpg").default}><Link to={`/admin/drivers/${driver.id}`}>{driver.name}</Link></RowHeadingCell>
           <Cell>{driver.joinedAt ? formatDate(driver.joinedAt.toDate()) : '-'}</Cell>
           <Cell>
             <i className="fas fa-circle text-emerald-500 mr-2"></i> AVAILABLE

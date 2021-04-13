@@ -1,11 +1,12 @@
+import classNames from 'classnames';
 import CardTable from 'components/Cards/CardTable.js';
+import TableDropdown from 'components/Dropdowns/TableDropdown.js';
+import LoadingBar from 'components/LoadingBar';
 import Cell from 'components/Table/Cell.js';
 import HeadingCell from 'components/Table/HeadingCell.js';
-import TableDropdown from 'components/Dropdowns/TableDropdown.js';
 import React, { Suspense } from 'react';
+import { Link } from 'react-router-dom';
 import { useFirestore, useFirestoreCollectionData } from 'reactfire';
-import classNames from 'classnames';
-import LoadingBar from '../../components/LoadingBar';
 
 
 export default function Orders() {
@@ -53,7 +54,7 @@ function OrderRows() {
     <tbody>
       {orders.map(order => (
         <tr>
-          <Cell>{order.customerId}</Cell>
+          <Cell><Link to={`/admin/customers/${order.customerId}`}>Customer Name</Link></Cell>
           <Cell>{order.amount}L</Cell>
           <Cell>{typeLabels.get(order.fuelType)}</Cell>
           <Cell>{order.price > 0 ? `${order.price} SDG` : '-'}</Cell>
@@ -67,7 +68,15 @@ function OrderRows() {
               }
             )}></i> {statusLabels.get(order.status)}
           </Cell>
-          <Cell>{order.driverId}</Cell>
+          <Cell>
+            {order.driverId
+              ? (
+                <Link to={`/admin/drivers/${order.driverId}`}>
+                  {order.driverId}
+                </Link>
+              )
+              : '-'}
+          </Cell>
           <Cell action={true}>
             <TableDropdown />
           </Cell>
