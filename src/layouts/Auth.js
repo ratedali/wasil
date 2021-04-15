@@ -10,7 +10,7 @@ import FooterSmall from "components/Footers/FooterSmall.js";
 
 import Login from "views/auth/Login.js";
 import Register from "views/auth/Register.js";
-import LoadingPage from 'components/loading/LoadingPage.js';
+import LoadingPage from 'components/Loading/LoadingPage.js';
 
 export default function Auth() {
   return (

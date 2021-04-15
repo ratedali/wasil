@@ -8,6 +8,7 @@ import Customers from 'views/admin/Customers';
 import Dashboard from "views/admin/Dashboard.js";
 import DriverDetails from 'views/admin/DriverDetails.js';
 import Drivers from 'views/admin/Drivers';
+import Inventories from 'views/admin/Inventories';
 import Maps from "views/admin/Maps.js";
 import OrderDetails from 'views/admin/OrderDetails.js';
 import Orders from 'views/admin/Orders';
@@ -31,6 +32,7 @@ export default function Admin() {
             <Route path="/admin/drivers/:id" exact component={DriverDetails} />
             <Route path="/admin/orders" exact component={Orders} />
             <Route path="/admin/orders/:id" exact component={OrderDetails} />
+            <Route path="/admin/inventories" exact component={Inventories} />
             <Route path="/admin/maps" exact component={Maps} />
             <Route path="/admin/settings" exact component={Settings} />
             <Redirect from="/admin" to="/admin/dashboard" />
