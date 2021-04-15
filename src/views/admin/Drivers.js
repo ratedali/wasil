@@ -1,3 +1,4 @@
+import classNames from 'classnames';
 import CardTable from 'components/Cards/CardTable.js';
 import TableDropdown from 'components/Dropdowns/TableDropdown.js';
 import LoadingBar from 'components/LoadingBar';
@@ -18,9 +19,10 @@ export default function Drivers() {
             <thead>
               <tr>
                 <HeadingCell>Driver</HeadingCell>
+                <HeadingCell>Status</HeadingCell>
+                <HeadingCell>Gasoline</HeadingCell>
+                <HeadingCell>Benzene</HeadingCell>
                 <HeadingCell>Joined At</HeadingCell>
-                <HeadingCell>Current Status</HeadingCell>
-                <HeadingCell>Available Fuel</HeadingCell>
                 <HeadingCell>Actions</HeadingCell>
               </tr>
             </thead>
@@ -36,20 +38,27 @@ export default function Drivers() {
 
 function DriverRows() {
   const query = useFirestore()
-    .collection('drivers')
+    .collection('refillDrivers')
+    .orderBy('joinedAt', 'desc')
     .limit(10);
-  const { data: drivers } = useFirestoreCollectionData(query);
+  const collectionData = useFirestoreCollectionData(query);
+  const { data: drivers } = collectionData;
   const formatDate = format('dd/MM/yyyy');
   return (
     <tbody>
       {drivers.map(driver => (
         <tr>
           <RowHeadingCell avatar={require("assets/img/bootstrap.jpg").default}><Link to={`/admin/drivers/${driver.id}`}>{driver.name}</Link></RowHeadingCell>
-          <Cell>{driver.joinedAt ? formatDate(driver.joinedAt.toDate()) : '-'}</Cell>
           <Cell>
-            <i className="fas fa-circle text-emerald-500 mr-2"></i> AVAILABLE
-                    </Cell>
+            <i className={classNames("fas fa-circle mr-2", {
+              "text-emerald-500": driver.available,
+              "text-red-500": !driver.available,
+            })}></i>
+            {driver.available ? "ONLINE" : "OFFLINE"}
+          </Cell>
           <Cell>595/1000 Liters</Cell>
+          <Cell>595/1000 Liters</Cell>
+          <Cell>{driver.joinedAt ? formatDate(driver.joinedAt.toDate()) : '-'}</Cell>
           <Cell action={true}>
             <TableDropdown />
           </Cell>
