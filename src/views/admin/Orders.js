@@ -1,7 +1,7 @@
 import classNames from 'classnames';
 import CardTable from 'components/Cards/CardTable.js';
 import TableDropdown from 'components/Dropdowns/TableDropdown.js';
-import LoadingBar from 'components/LoadingBar';
+import LoadingBar from 'components/loading/LoadingBar';
 import Cell from 'components/Table/Cell.js';
 import HeadingCell from 'components/Table/HeadingCell.js';
 import React, { Suspense } from 'react';
