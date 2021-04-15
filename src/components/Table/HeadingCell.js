@@ -1,7 +1,6 @@
-import PropTypes from "prop-types";
-import classNames from 'classnames';
-import { TableColor } from '../Cards/CardTable';
-import { useContext } from 'react';
+import classNames from "classnames";
+import { TableColor } from "components/Cards/CardTable.js";
+import { useContext } from "react";
 
 export default function HeadingCell({ children }) {
     const color = useContext(TableColor);
@@ -18,8 +17,4 @@ export default function HeadingCell({ children }) {
             {children}
         </th>
     );
-}
-
-HeadingCell.propTypes = {
-    children: PropTypes.string
 }

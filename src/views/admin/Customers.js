@@ -7,7 +7,7 @@ import RowHeadingCell from 'components/Table/RowHeadingCell.js';
 import { format } from "date-fns/fp";
 import React, { Suspense } from 'react';
 import { Link } from 'react-router-dom';
-import { useFirestore, useFirestoreCollectionData } from 'reactfire';
+import { useFirestore, useFirestoreCollection, useFirestoreDocData } from 'reactfire';
 
 
 export default function Customers() {
@@ -25,9 +25,11 @@ export default function Customers() {
               <HeadingCell>Actions</HeadingCell>
             </tr>
           </thead>
-          <Suspense fallback={<LoadingBar />}>
-            <CustomerRows />
-          </Suspense>
+          <tbody>
+            <Suspense fallback={<tr><td colSpan={5}><LoadingBar /></td></tr>}>
+              <CustomerRows />
+            </Suspense>
+          </tbody>
         </CardTable>
       </div>
     </div>
@@ -37,30 +39,35 @@ export default function Customers() {
 function CustomerRows() {
   const query = useFirestore()
     .collection('users')
+    .orderBy('joinedAt', 'desc')
     .limit(10);
-  const { data: customers } = useFirestoreCollectionData(query);
+  const { data: collection } = useFirestoreCollection(query);
+  return collection
+    .docs
+    .map(doc => <Customer key={doc.id} doc={doc} />);
+}
+
+function Customer({ doc }) {
+  const { data: customer } = useFirestoreDocData(doc.ref);
   const formatDate = format('dd/MM/yyyy');
   return (
-    <tbody>
-      {customers.map(customer => (
-        <tr key={customer.id}>
-          <RowHeadingCell avatar={require("assets/img/bootstrap.jpg").default}><Link to={`/admin/customers/${customer.id}`}>{customer.name}</Link></RowHeadingCell>
-          <Cell>{customer.phone}</Cell>
-          <Cell>{
-            customer.joinedAt
-              ? formatDate(customer.joinedAt.toDate())
-              : null
-          }</Cell>
-          <Cell>{
-            customer.lastLogin
-              ? formatDate(customer.lastLogin.toDate())
-              : null
-          }</Cell>
-          <Cell action={true}>
-            <TableDropdown />
-          </Cell>
-        </tr>
-      ))}
-    </tbody>
+    <tr key={doc.id}>
+      <RowHeadingCell avatar={require("assets/img/bootstrap.jpg").default}><Link to={`/admin/customers/${doc.id}`}>{customer.name}</Link></RowHeadingCell>
+      <Cell>{customer.phone}</Cell>
+      <Cell>{
+        customer.joinedAt
+          ? formatDate(customer.joinedAt.toDate())
+          : null
+      }</Cell>
+      <Cell>{
+        customer.lastLogin
+          ? formatDate(customer.lastLogin.toDate())
+          : null
+      }</Cell>
+      <Cell action={true}>
+        <TableDropdown />
+      </Cell>
+    </tr>
+
   );
 }

@@ -1,5 +1,5 @@
-import classNames from 'classnames';
-import PropTypes from 'prop-types';
+import classNames from "classnames";
+import PropTypes from "prop-types";
 
 export default function Cell({ action = false, children }) {
     return (
@@ -16,5 +16,4 @@ export default function Cell({ action = false, children }) {
 
 Cell.propTypes = {
     action: PropTypes.bool,
-    children: PropTypes.string,
 }
