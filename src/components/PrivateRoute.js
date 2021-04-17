@@ -1,7 +1,7 @@
 import { Redirect, Route, useLocation } from 'react-router-dom';
 import { AuthCheck } from 'reactfire';
 import { Suspense } from "react";
-import LoadingPage from "components/loading/LoadingPage.js";
+import LoadingPage from "components/Loading/LoadingPage.js";
 
 export default function PrivateRoute(props) {
     const location = useLocation();
