@@ -1,6 +1,37 @@
-import React from "react";
+import React, { Suspense } from 'react';
+import {useParams } from 'react-router-dom'
+import { useFirestore, useFirestoreDocData, useFirestoreCollectionData } from 'reactfire';
+import { format } from "date-fns/fp";
+
+import classNames from 'classnames';
+import LoadingBar from 'components/loading/LoadingBar';
+import HeadingCell from 'components/Table/HeadingCell.js';
+import { Link } from 'react-router-dom';
+import Cell from 'components/Table/Cell.js';
 
 export default function DriverDetails() {
+
+
+
+  const { id } = useParams()
+  const querystring = `refillDrivers/${id}`
+  const query = useFirestore()
+    .doc(querystring)
+  const { data: driver } = useFirestoreDocData(query);
+  const formatDate = format('dd/MM/yyyy');
+
+
+  const queryDeliveries = useFirestore()
+    .collection('fuelOrders')
+    .where("driverId", "==" , id)
+  const { data: driverDeliveries } = useFirestoreCollectionData(queryDeliveries);
+  var benzeneCount = 0
+  for (const delivery of driverDeliveries) {
+    if (delivery.fuelType == "benzene") {
+      benzeneCount += 1
+    }
+  }
+
   return (
     <>
       <div className="relative flex flex-col min-w-0 break-words bg-white px-6 w-full mb-6 shadow-lg rounded">
@@ -18,7 +49,7 @@ export default function DriverDetails() {
             <div className="flex justify-start py-4 lg:pt-7 pt-8">
               <div className="mr-4 p-3 text-center">
                 <span className="text-xl font-bold block uppercase tracking-wide text-blueGray-600">
-                  22
+                {driverDeliveries.length}
                 </span>
                 <span className="text-sm text-blueGray-400">
                   Deliveries
@@ -26,15 +57,15 @@ export default function DriverDetails() {
               </div>
               <div className="mr-4 p-3 text-center">
                 <span className="text-xl font-bold block uppercase tracking-wide text-blueGray-600">
-                  10L
-                        </span>
+                {driverDeliveries.length - benzeneCount}
+                  </span>
                 <span className="text-sm text-blueGray-400">
                   Gasoline
                 </span>
               </div>
               <div className="p-3 text-center">
                 <span className="text-xl font-bold block uppercase tracking-wide text-blueGray-600">
-                  89L
+                  {benzeneCount}
                 </span>
                 <span className="text-sm text-blueGray-400">
                   Benzene
@@ -45,15 +76,11 @@ export default function DriverDetails() {
         </div>
         <div className="text-center mt-1">
           <h3 className="text-4xl font-semibold leading-normal mb-2 text-blueGray-700">
-            Jenna Stones
+            {driver.name}
           </h3>
-          <div className="text-sm leading-normal mt-0 mb-2 text-blueGray-400 font-bold uppercase">
-            <i className="fas fa-map-marker-alt mr-2 text-lg text-blueGray-400"></i>{" "}
-            Khartoum - Sudan
-          </div>
           <div className="mb-2 text-blueGray-600">
             <i className="fas fa-phone mr-2 text-lg text-blueGray-400"></i>
-            0912345678
+            {driver.phone}
           </div>
           <div className="mb-2 text-blueGray-600">
             <i className="fas fa-truck mr-2 text-lg text-blueGray-400"></i>
@@ -61,7 +88,9 @@ export default function DriverDetails() {
           </div>
           <div className="mb-2 text-blueGray-600">
             <i className="fas fa-calendar-alt mr-2 text-lg text-blueGray-400"></i>
-            Joined at 12-12-2012
+            Joined at {driver.joinedAt
+              ? formatDate(driver.joinedAt.toDate())
+              : null}
           </div>
           <div className="mb-2 text-blueGray-600">
             <i className="fas fa-gas-pump mr-2 text-lg text-blueGray-400"></i>
@@ -69,9 +98,73 @@ export default function DriverDetails() {
           </div>
         </div>
         <div className="mt-10 py-10 border-t border-blueGray-200 text-center">
-          Order History List
+        <>
+      <div className="flex flex-wrap mt-4">
+        <div className="w-full mb-12 px-4">
+          <table>
+            <thead>
+              <tr>
+                <HeadingCell>Customer</HeadingCell>
+                <HeadingCell>Amount</HeadingCell>
+                <HeadingCell>Fuel</HeadingCell>
+                <HeadingCell>Fee</HeadingCell>
+                <HeadingCell>Status</HeadingCell>
+                <HeadingCell>Driver</HeadingCell>
+              </tr>
+            </thead>
+            <Suspense fallback={<LoadingBar />}>
+              <DriverDiliveriRow orders= {driverDeliveries} />
+            </Suspense>
+          </table>
         </div>
       </div>
     </>
+        </div>
+      </div>
+    </>
+  );
+}
+
+
+function DriverDiliveriRow({orders}) {
+  const typeLabels = new Map([
+    ['benzene', 'Benzene'],
+    ['gasoline', 'Gasoline'],
+  ]);
+  const statusLabels = new Map([
+    ['unconfirmed', 'Unconfirmed'],
+    ['in-progress', 'In Progress'],
+    ['finished', 'Finished'],
+  ]);
+  return (
+    <tbody>
+      {orders.map(order => (
+        <tr>
+          <Cell><Link to={`/admin/customers/${order.customerId}`}>{order.customerName}</Link></Cell>
+          <Cell>{order.amount}L</Cell>
+          <Cell>{typeLabels.get(order.fuelType)}</Cell>
+          <Cell>{order.price > 0 ? `${order.price} SDG` : '-'}</Cell>
+          <Cell>
+            <i className={classNames(
+              "fas fa-circle mr-2",
+              {
+                "text-gray-300": order.status === 'new',
+                "text-yellow-300 ": order.status === 'in-progress',
+                "text-emerald-300 ": order.status === 'finished',
+              }
+            )}></i> {statusLabels.get(order.status)}
+          </Cell>
+          <Cell>
+            {order.driverId
+              ? (
+                <Link to={`/admin/drivers/${order.driverId}`}>
+                  {order.driverId}
+                </Link>
+              )
+              : '-'}
+          </Cell>
+        </tr>
+      ))}
+    </tbody>
   );
 }

@@ -16,6 +16,7 @@ import Settings from "views/admin/Settings.js";
 
 
 export default function Admin() {
+  
   return (
     <>
       <Sidebar />
