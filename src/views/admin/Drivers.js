@@ -8,7 +8,7 @@ import RowHeadingCell from 'components/Table/RowHeadingCell.js';
 import { format } from 'date-fns/fp';
 import React, { Suspense } from 'react';
 import { Link } from 'react-router-dom';
-import { useFirestore, useFirestoreCollectionData } from 'reactfire';
+import { useFirestore, useFirestoreCollection, useFirestoreDocData } from 'reactfire';
 
 export default function Drivers() {
   return (
@@ -26,9 +26,11 @@ export default function Drivers() {
                 <HeadingCell>Actions</HeadingCell>
               </tr>
             </thead>
-            <Suspense fallback={<LoadingBar />}>
-              <DriverRows />
-            </Suspense>
+            <tbody>
+              <Suspense fallback={<tr><td colSpan={5}><LoadingBar /></td></tr>}>
+                <DriverRows />
+              </Suspense>
+            </tbody>
           </CardTable>
         </div>
       </div>
@@ -36,34 +38,35 @@ export default function Drivers() {
   );
 }
 
+
 function DriverRows() {
   const query = useFirestore()
     .collection('refillDrivers')
     .orderBy('joinedAt', 'desc')
     .limit(10);
-  const collectionData = useFirestoreCollectionData(query);
-  const { data: drivers } = collectionData;
+  const { data: collection } = useFirestoreCollection(query);
+  return collection.docs.map(doc => <Driver key={doc.id} doc={doc} />);
+}
+
+function Driver({ doc }) {
+  const { data: driver } = useFirestoreDocData(doc.ref)
   const formatDate = format('dd/MM/yyyy');
   return (
-    <tbody>
-      {drivers.map(driver => (
-        <tr>
-          <RowHeadingCell avatar={require("assets/img/bootstrap.jpg").default}><Link to={`/admin/drivers/${driver.id}`}>{driver.name}</Link></RowHeadingCell>
-          <Cell>
-            <i className={classNames("fas fa-circle mr-2", {
-              "text-emerald-500": driver.available,
-              "text-red-500": !driver.available,
-            })}></i>
-            {driver.available ? "ONLINE" : "OFFLINE"}
-          </Cell>
-          <Cell>595/1000 Liters</Cell>
-          <Cell>595/1000 Liters</Cell>
-          <Cell>{driver.joinedAt ? formatDate(driver.joinedAt.toDate()) : '-'}</Cell>
-          <Cell action={true}>
-            <TableDropdown />
-          </Cell>
-        </tr>
-      ))}
-    </tbody>
+    <tr>
+      <RowHeadingCell avatar={require("assets/img/bootstrap.jpg").default}><Link to={`/admin/drivers/${doc.id}`}>{driver.name}</Link></RowHeadingCell>
+      <Cell>
+        <i className={classNames("fas fa-circle mr-2", {
+          "text-emerald-500": driver.available,
+          "text-red-500": !driver.available,
+        })}></i>
+        {driver.available ? "ONLINE" : "OFFLINE"}
+      </Cell>
+      <Cell>595/1000 Liters</Cell>
+      <Cell>595/1000 Liters</Cell>
+      <Cell>{driver.joinedAt ? formatDate(driver.joinedAt.toDate()) : '-'}</Cell>
+      <Cell action={true}>
+        <TableDropdown />
+      </Cell>
+    </tr>
   );
 }
