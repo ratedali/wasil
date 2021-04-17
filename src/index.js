@@ -3,6 +3,7 @@ import "assets/styles/index.css";
 import 'firebase/app';
 import 'firebase/auth';
 import 'firebase/firestore';
+import 'react-app-polyfill/stable';
 import React from "react";
 import ReactDOM from "react-dom";
 import { FirebaseAppProvider } from 'reactfire';
