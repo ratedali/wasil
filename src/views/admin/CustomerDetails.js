@@ -1,30 +1,27 @@
-import React, { Suspense } from 'react';
-import {useParams } from 'react-router-dom'
-import { useFirestore, useFirestoreDocData, useFirestoreCollectionData } from 'reactfire';
+import classNames from "classnames";
+import LoadingBar from "components/Loading/LoadingBar.js";
+import Cell from "components/Table/Cell.js";
+import HeadingCell from "components/Table/HeadingCell.js";
 import { format } from "date-fns/fp";
-
-import classNames from 'classnames';
-import LoadingBar from 'components/loading/LoadingBar';
-import HeadingCell from 'components/Table/HeadingCell.js';
-import { Link } from 'react-router-dom';
-import Cell from 'components/Table/Cell.js';
-
+import React, { Suspense } from "react";
+import { Link, useParams } from "react-router-dom";
+import { useFirestore, useFirestoreCollectionData, useFirestoreDocData } from "reactfire";
 
 
 export default function CustomerDetails() {
-  
-  
+
+
   const { id } = useParams()
   const querystring = `users/${id}`
   const query = useFirestore()
     .doc(querystring)
   const { data: customer } = useFirestoreDocData(query);
   const formatDate = format('dd/MM/yyyy');
-  
-  
+
+
   const queryOrder = useFirestore()
     .collection('fuelOrders')
-    .where("customerId", "==" , id)
+    .where("customerId", "==", id)
   const { data: customerOrders } = useFirestoreCollectionData(queryOrder);
   var benzeneCount = 0
   for (const order of customerOrders) {
@@ -32,7 +29,7 @@ export default function CustomerDetails() {
       benzeneCount += 1
     }
   }
-  
+
   return (
     <>
       <div className="relative flex flex-col min-w-0 break-words bg-white w-full mb-6 shadow-lg rounded">
@@ -91,8 +88,8 @@ export default function CustomerDetails() {
             <div className="mb-2 text-blueGray-600">
               <i className="fas fa-calendar-alt mr-2 text-lg text-blueGray-400"></i>
               Joined at {customer.joinedAt
-              ? formatDate(customer.joinedAt.toDate())
-              : null}
+                ? formatDate(customer.joinedAt.toDate())
+                : null}
             </div>
             <div className="mb-2 text-blueGray-600">
               <i className="fas fa-gas-pump mr-2 text-lg text-blueGray-400"></i>
@@ -100,27 +97,27 @@ export default function CustomerDetails() {
             </div>
           </div>
           <div className="mt-10 py-10 border-t border-blueGray-200 text-center">
-          <>
-      <div className="flex flex-wrap mt-4">
-        <div className="w-full mb-12 px-4">
-          <table>
-            <thead>
-              <tr>
-                <HeadingCell>Customer</HeadingCell>
-                <HeadingCell>Amount</HeadingCell>
-                <HeadingCell>Fuel</HeadingCell>
-                <HeadingCell>Fee</HeadingCell>
-                <HeadingCell>Status</HeadingCell>
-                <HeadingCell>Driver</HeadingCell>
-              </tr>
-            </thead>
-            <Suspense fallback={<LoadingBar />}>
-              <CustomerOrdersRow orders= {customerOrders}/>
-            </Suspense>
-          </table>
-        </div>
-      </div>
-    </>
+            <>
+              <div className="flex flex-wrap mt-4">
+                <div className="w-full mb-12 px-4">
+                  <table>
+                    <thead>
+                      <tr>
+                        <HeadingCell>Customer</HeadingCell>
+                        <HeadingCell>Amount</HeadingCell>
+                        <HeadingCell>Fuel</HeadingCell>
+                        <HeadingCell>Fee</HeadingCell>
+                        <HeadingCell>Status</HeadingCell>
+                        <HeadingCell>Driver</HeadingCell>
+                      </tr>
+                    </thead>
+                    <Suspense fallback={<LoadingBar />}>
+                      <CustomerOrdersRow orders={customerOrders} />
+                    </Suspense>
+                  </table>
+                </div>
+              </div>
+            </>
           </div>
         </div>
       </div>
@@ -129,7 +126,7 @@ export default function CustomerDetails() {
 }
 
 
-function CustomerOrdersRow({orders}) {
+function CustomerOrdersRow({ orders }) {
   const typeLabels = new Map([
     ['benzene', 'Benzene'],
     ['gasoline', 'Gasoline'],

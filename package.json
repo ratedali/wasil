@@ -31,7 +31,10 @@
     "install:clean": "rm -rf node_modules/ && rm -rf package-lock.json && npm install && npm start"
   },
   "eslintConfig": {
-    "extends": "react-app"
+    "extends": "react-app",
+    "rules": {
+      "eqeqeq": "off"
+    }
   },
   "browserslist": {
     "production": [

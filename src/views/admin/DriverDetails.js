@@ -1,13 +1,12 @@
-import React, { Suspense } from 'react';
-import {useParams } from 'react-router-dom'
-import { useFirestore, useFirestoreDocData, useFirestoreCollectionData } from 'reactfire';
+import classNames from "classnames";
+import LoadingBar from "components/Loading/LoadingBar.js";
+import Cell from "components/Table/Cell.js";
+import HeadingCell from "components/Table/HeadingCell.js";
 import { format } from "date-fns/fp";
+import React, { Suspense } from "react";
+import { Link, useParams } from "react-router-dom";
+import { useFirestore, useFirestoreCollectionData, useFirestoreDocData } from "reactfire";
 
-import classNames from 'classnames';
-import LoadingBar from 'components/loading/LoadingBar';
-import HeadingCell from 'components/Table/HeadingCell.js';
-import { Link } from 'react-router-dom';
-import Cell from 'components/Table/Cell.js';
 
 export default function DriverDetails() {
 
@@ -23,7 +22,7 @@ export default function DriverDetails() {
 
   const queryDeliveries = useFirestore()
     .collection('fuelOrders')
-    .where("driverId", "==" , id)
+    .where("driverId", "==", id)
   const { data: driverDeliveries } = useFirestoreCollectionData(queryDeliveries);
   var benzeneCount = 0
   for (const delivery of driverDeliveries) {
@@ -49,7 +48,7 @@ export default function DriverDetails() {
             <div className="flex justify-start py-4 lg:pt-7 pt-8">
               <div className="mr-4 p-3 text-center">
                 <span className="text-xl font-bold block uppercase tracking-wide text-blueGray-600">
-                {driverDeliveries.length}
+                  {driverDeliveries.length}
                 </span>
                 <span className="text-sm text-blueGray-400">
                   Deliveries
@@ -57,8 +56,8 @@ export default function DriverDetails() {
               </div>
               <div className="mr-4 p-3 text-center">
                 <span className="text-xl font-bold block uppercase tracking-wide text-blueGray-600">
-                {driverDeliveries.length - benzeneCount}
-                  </span>
+                  {driverDeliveries.length - benzeneCount}
+                </span>
                 <span className="text-sm text-blueGray-400">
                   Gasoline
                 </span>
@@ -98,27 +97,27 @@ export default function DriverDetails() {
           </div>
         </div>
         <div className="mt-10 py-10 border-t border-blueGray-200 text-center">
-        <>
-      <div className="flex flex-wrap mt-4">
-        <div className="w-full mb-12 px-4">
-          <table>
-            <thead>
-              <tr>
-                <HeadingCell>Customer</HeadingCell>
-                <HeadingCell>Amount</HeadingCell>
-                <HeadingCell>Fuel</HeadingCell>
-                <HeadingCell>Fee</HeadingCell>
-                <HeadingCell>Status</HeadingCell>
-                <HeadingCell>Driver</HeadingCell>
-              </tr>
-            </thead>
-            <Suspense fallback={<LoadingBar />}>
-              <DriverDiliveriRow orders= {driverDeliveries} />
-            </Suspense>
-          </table>
-        </div>
-      </div>
-    </>
+          <>
+            <div className="flex flex-wrap mt-4">
+              <div className="w-full mb-12 px-4">
+                <table>
+                  <thead>
+                    <tr>
+                      <HeadingCell>Customer</HeadingCell>
+                      <HeadingCell>Amount</HeadingCell>
+                      <HeadingCell>Fuel</HeadingCell>
+                      <HeadingCell>Fee</HeadingCell>
+                      <HeadingCell>Status</HeadingCell>
+                      <HeadingCell>Driver</HeadingCell>
+                    </tr>
+                  </thead>
+                  <Suspense fallback={<LoadingBar />}>
+                    <DriverDiliveriRow orders={driverDeliveries} />
+                  </Suspense>
+                </table>
+              </div>
+            </div>
+          </>
         </div>
       </div>
     </>
@@ -126,7 +125,7 @@ export default function DriverDetails() {
 }
 
 
-function DriverDiliveriRow({orders}) {
+function DriverDiliveriRow({ orders }) {
   const typeLabels = new Map([
     ['benzene', 'Benzene'],
     ['gasoline', 'Gasoline'],

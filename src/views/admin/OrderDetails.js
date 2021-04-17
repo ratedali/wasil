@@ -1,13 +1,8 @@
-import React, { Suspense } from 'react';
-import {useParams } from 'react-router-dom'
-import { useFirestore, useFirestoreDocData, useFirestoreCollectionData } from 'reactfire';
-import { format } from "date-fns/fp";
+import classNames from "classnames";
+import React from "react";
+import { Link, useParams } from "react-router-dom";
+import { useFirestore, useFirestoreDocData } from "reactfire";
 
-import classNames from 'classnames';
-import LoadingBar from 'components/loading/LoadingBar';
-import HeadingCell from 'components/Table/HeadingCell.js';
-import { Link } from 'react-router-dom';
-import Cell from 'components/Table/Cell.js';
 
 export default function OrderDetails() {
 
@@ -23,8 +18,8 @@ export default function OrderDetails() {
   const queryCustomer = useFirestore().doc(`users/${order.customerId}`);
   const { data: customer } = useFirestoreDocData(queryCustomer);
 
-  const dropoff = order.dropLocation.latitude +", "+order.dropLocation.longitude;
-  
+  const dropoff = order.dropLocation.latitude + ", " + order.dropLocation.longitude;
+
   const statusLabels = new Map([
     ['unconfirmed', 'Unconfirmed'],
     ['in-progress', 'In Progress'],
@@ -57,7 +52,7 @@ export default function OrderDetails() {
                         "text-yellow-300 ": order.status === 'in-progress',
                         "text-emerald-300 ": order.status === 'finished',
                       }
-                    )}></i> 
+                    )}></i>
                   </span>
                   <span className="text-sm text-blueGray-400">
                     {statusLabels.get(order.status)}
@@ -99,7 +94,7 @@ export default function OrderDetails() {
             <div className="mb-2 text-blueGray-600">
               <i className="fas fa-truck mr-2 text-lg text-blueGray-400"></i>
               <Link to={`/admin/drivers/${order.driverId}`}>
-                {(driver.name == null) ? "Not Set":driver.name}
+                {(driver.name == null) ? "Not Set" : driver.name}
               </Link>
             </div>
             <div className="mb-12 text-blueGray-600">
