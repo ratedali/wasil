@@ -143,7 +143,7 @@ function CustomerOrdersRow({orders}) {
     <tbody>
       {orders.map(order => (
         <tr>
-          <Cell><Link to={`/admin/customers/${order.customerId}`}>Customer Name</Link></Cell>
+          <Cell><Link to={`/admin/customers/${order.customerId}`}>{order.customerId}</Link></Cell>
           <Cell>{order.amount}L</Cell>
           <Cell>{typeLabels.get(order.fuelType)}</Cell>
           <Cell>{order.price > 0 ? `${order.price} SDG` : '-'}</Cell>

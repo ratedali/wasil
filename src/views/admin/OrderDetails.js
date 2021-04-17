@@ -1,10 +1,35 @@
-import React from "react";
+import React, { Suspense } from 'react';
+import {useParams } from 'react-router-dom'
+import { useFirestore, useFirestoreDocData, useFirestoreCollectionData } from 'reactfire';
+import { format } from "date-fns/fp";
+
+import classNames from 'classnames';
+import LoadingBar from 'components/loading/LoadingBar';
+import HeadingCell from 'components/Table/HeadingCell.js';
+import { Link } from 'react-router-dom';
+import Cell from 'components/Table/Cell.js';
 
 export default function OrderDetails() {
 
 
-  
+  const { id } = useParams();
+  const querystring = `fuelOrders/${id}`;
+  const query = useFirestore().doc(querystring);
+  const { data: order } = useFirestoreDocData(query);
 
+  const queryDriver = useFirestore().doc(`refillDrivers/${order.driverId}`);
+  const { data: driver } = useFirestoreDocData(queryDriver);
+
+  const queryCustomer = useFirestore().doc(`users/${order.customerId}`);
+  const { data: customer } = useFirestoreDocData(queryCustomer);
+
+  const dropoff = order.dropLocation.latitude +", "+order.dropLocation.longitude;
+  
+  const statusLabels = new Map([
+    ['unconfirmed', 'Unconfirmed'],
+    ['in-progress', 'In Progress'],
+    ['finished', 'Finished'],
+  ]);
 
 
   return (
@@ -25,10 +50,17 @@ export default function OrderDetails() {
               <div className="flex justify-center py-4 lg:pt-7 pt-8">
                 <div className="mr-20 p-3 text-center">
                   <span className="text-xl font-bold block uppercase tracking-wide text-blueGray-600">
-                    In Progress
+                    <i className={classNames(
+                      "fas fa-circle mr-2",
+                      {
+                        "text-gray-300": order.status === 'new',
+                        "text-yellow-300 ": order.status === 'in-progress',
+                        "text-emerald-300 ": order.status === 'finished',
+                      }
+                    )}></i> 
                   </span>
                   <span className="text-sm text-blueGray-400">
-                    Status
+                    {statusLabels.get(order.status)}
                   </span>
                 </div>
               </div>
@@ -40,11 +72,11 @@ export default function OrderDetails() {
             </h5>
             <div className="mb-2 text-blueGray-600">
               <i className="fas fa-map-marker-alt mr-2 text-lg text-blueGray-400"></i>
-              Drop Off Location
+              {dropoff}
             </div>
             <div className="mb-2 text-blueGray-600">
               <i className="fas fa-dollar-sign mr-2 text-lg text-blueGray-400"></i>
-              Fee
+              {order.price}
             </div>
             <div className="mb-2 text-blueGray-600">
               <i className="fas fa-calendar-alt mr-2 text-lg text-blueGray-400"></i>
@@ -52,19 +84,25 @@ export default function OrderDetails() {
             </div>
             <div className="mb-2 text-blueGray-600">
               <i className="fas fa-gas-pump mr-2 text-lg text-blueGray-400"></i>
-              Type
+              {order.fuelType}
             </div>
             <div className="mb-2 text-blueGray-600">
               <i className="fas fa-tachometer-alt mr-2 text-lg text-blueGray-400"></i>
-              Amount
+              {order.amount}L
             </div>
             <div className="mb-2 text-blueGray-600">
               <i className="fas fa-user mr-2 text-lg text-blueGray-400"></i>
-              Customer Name
+              <Link to={`/admin/customers/${order.customerId}`}>
+                {customer.name}
+              </Link>
             </div>
             <div className="mb-2 text-blueGray-600">
               <i className="fas fa-truck mr-2 text-lg text-blueGray-400"></i>
-              Driver Name
+              <Link to={`/admin/drivers/${order.driverId}`}>
+                {(driver.name == null) ? "Not Set":driver.name}
+              </Link>
+            </div>
+            <div className="mb-12 text-blueGray-600">
             </div>
           </div>
         </div>
