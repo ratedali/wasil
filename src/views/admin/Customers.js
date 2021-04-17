@@ -1,50 +1,75 @@
-import CardTable from 'components/Cards/CardTable.js';
-import TableDropdown from 'components/Dropdowns/TableDropdown.js';
-import LoadingBar from 'components/Loading/LoadingBar.js';
-import Cell from 'components/Table/Cell.js';
-import HeadingCell from 'components/Table/HeadingCell.js';
-import RowHeadingCell from 'components/Table/RowHeadingCell.js';
+import Card from "components/Cards/Card.js";
+import TableDropdown from "components/Dropdowns/TableDropdown.js";
+import LoadingBar from "components/Loading/LoadingBar.js";
+import Cell from "components/Table/Cell.js";
+import HeadingCell from "components/Table/HeadingCell.js";
+import RowHeadingCell from "components/Table/RowHeadingCell.js";
+import Table from "components/Table/Table.js";
 import { format } from "date-fns/fp";
-import React, { Suspense } from 'react';
-import { Link } from 'react-router-dom';
-import { useFirestore, useFirestoreCollection, useFirestoreDocData } from 'reactfire';
+import React, { Suspense } from "react";
+import { Link } from "react-router-dom";
+import { useFirestore, useFirestoreCollection, useFirestoreDocData } from "reactfire";
 
+const headings = [
+  "Customer",
+  "Phone",
+  "Joined At",
+  "Last Login",
+  "Actions"
+];
 
 export default function Customers() {
-
   return (
     <div className="flex flex-wrap mt-4">
       <div className="w-full mb-12 px-4">
-        <CardTable title="Customers">
-          <thead>
-            <tr>
-              <HeadingCell>Customer</HeadingCell>
-              <HeadingCell>Phone</HeadingCell>
-              <HeadingCell>Joined At</HeadingCell>
-              <HeadingCell>Last Login</HeadingCell>
-              <HeadingCell>Actions</HeadingCell>
-            </tr>
-          </thead>
-          <tbody>
-            <Suspense fallback={<tr><td colSpan={5}><LoadingBar /></td></tr>}>
-              <CustomerRows />
-            </Suspense>
-          </tbody>
-        </CardTable>
+        <Suspense fallback={<LoadingCard />}>
+          <CustomersCard />
+        </Suspense>
       </div>
     </div>
   );
 }
 
-function CustomerRows() {
+function LoadingCard() {
+  return (
+    <Card>
+      <Table title="Customers">
+        <thead>
+          <tr>
+            {headings.map(heading => <HeadingCell>{heading}</HeadingCell>)}
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td colSpan={5}><LoadingBar /></td></tr>
+        </tbody>
+      </Table>
+    </Card>
+  );
+}
+
+function CustomersCard({ page }) {
   const query = useFirestore()
     .collection('users')
     .orderBy('joinedAt', 'desc')
     .limit(10);
   const { data: collection } = useFirestoreCollection(query);
-  return collection
-    .docs
-    .map(doc => <Customer key={doc.id} doc={doc} />);
+  return (
+    <Card title="Customers">
+      <Table>
+        <thead>
+          <tr>
+            {headings.map(heading => <HeadingCell>{heading}</HeadingCell>)}
+          </tr>
+        </thead>
+        <tbody>
+          {collection.docs.map(doc => (
+            <Customer key={doc.id} doc={doc} />
+          ))}
+        </tbody>
+      </Table>
+      <hr />
+    </Card>
+  );
 }
 
 function Customer({ doc }) {

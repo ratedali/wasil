@@ -1,12 +1,13 @@
-import classNames from 'classnames';
-import CardTable from 'components/Cards/CardTable.js';
-import TableDropdown from 'components/Dropdowns/TableDropdown.js';
-import LoadingBar from 'components/Loading/LoadingBar.js';
-import Cell from 'components/Table/Cell.js';
-import HeadingCell from 'components/Table/HeadingCell.js';
-import React, { Suspense } from 'react';
-import { Link } from 'react-router-dom';
-import { useFirestore, useFirestoreCollection, useFirestoreDocData } from 'reactfire';
+import classNames from "classnames";
+import Card from "components/Cards/Card.js";
+import Table from "components/Table/Table.js";
+import TableDropdown from "components/Dropdowns/TableDropdown.js";
+import LoadingBar from "components/Loading/LoadingBar.js";
+import Cell from "components/Table/Cell.js";
+import HeadingCell from "components/Table/HeadingCell.js";
+import React, { Suspense } from "react";
+import { Link } from "react-router-dom";
+import { useFirestore, useFirestoreCollection, useFirestoreDocData } from "reactfire";
 
 
 export default function Orders() {
@@ -14,25 +15,27 @@ export default function Orders() {
     <>
       <div className="flex flex-wrap mt-4">
         <div className="w-full mb-12 px-4">
-          <CardTable title='Fuel Orders'>
-            <thead>
-              <tr>
-                <HeadingCell>Customer</HeadingCell>
-                <HeadingCell>Amount</HeadingCell>
-                <HeadingCell>Fuel</HeadingCell>
-                <HeadingCell>Fee</HeadingCell>
-                <HeadingCell>Driver</HeadingCell>
-                <HeadingCell>Time</HeadingCell>
-                <HeadingCell>Status</HeadingCell>
-                <HeadingCell>Actions</HeadingCell>
-              </tr>
-            </thead>
-            <tbody>
-              <Suspense fallback={<tr><td colSpan={5}><LoadingBar /></td></tr>}>
-                <OrderRows />
-              </Suspense>
-            </tbody>
-          </CardTable>
+          <Card title='Fuel Orders'>
+            <Table>
+              <thead>
+                <tr>
+                  <HeadingCell>Customer</HeadingCell>
+                  <HeadingCell>Amount</HeadingCell>
+                  <HeadingCell>Fuel</HeadingCell>
+                  <HeadingCell>Fee</HeadingCell>
+                  <HeadingCell>Driver</HeadingCell>
+                  <HeadingCell>Time</HeadingCell>
+                  <HeadingCell>Status</HeadingCell>
+                  <HeadingCell>Actions</HeadingCell>
+                </tr>
+              </thead>
+              <tbody>
+                <Suspense fallback={<tr><td colSpan={5}><LoadingBar /></td></tr>}>
+                  <OrderRows />
+                </Suspense>
+              </tbody>
+            </Table>
+          </Card>
         </div>
       </div>
     </>

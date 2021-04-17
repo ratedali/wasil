@@ -1,37 +1,40 @@
-import classNames from 'classnames';
-import CardTable from 'components/Cards/CardTable.js';
-import TableDropdown from 'components/Dropdowns/TableDropdown.js';
-import LoadingBar from 'components/Loading/LoadingBar.js';
-import Cell from 'components/Table/Cell.js';
-import HeadingCell from 'components/Table/HeadingCell.js';
-import RowHeadingCell from 'components/Table/RowHeadingCell.js';
-import { format } from 'date-fns/fp';
-import React, { Suspense } from 'react';
-import { Link } from 'react-router-dom';
-import { useFirestore, useFirestoreCollection, useFirestoreDocData } from 'reactfire';
+import classNames from "classnames";
+import Card from "components/Cards/Card.js";
+import Table from "components/Table/Table.js";
+import TableDropdown from "components/Dropdowns/TableDropdown.js";
+import LoadingBar from "components/Loading/LoadingBar.js";
+import Cell from "components/Table/Cell.js";
+import HeadingCell from "components/Table/HeadingCell.js";
+import RowHeadingCell from "components/Table/RowHeadingCell.js";
+import { format } from "date-fns/fp";
+import React, { Suspense } from "react";
+import { Link } from "react-router-dom";
+import { useFirestore, useFirestoreCollection, useFirestoreDocData } from "reactfire";
 
 export default function Drivers() {
   return (
     <>
       <div className="flex flex-wrap mt-4">
         <div className="w-full mb-12 px-4">
-          <CardTable title="Fuel Delivery">
-            <thead>
-              <tr>
-                <HeadingCell>Driver</HeadingCell>
-                <HeadingCell>Status</HeadingCell>
-                <HeadingCell>Gasoline</HeadingCell>
-                <HeadingCell>Benzene</HeadingCell>
-                <HeadingCell>Joined At</HeadingCell>
-                <HeadingCell>Actions</HeadingCell>
-              </tr>
-            </thead>
-            <tbody>
-              <Suspense fallback={<tr><td colSpan={5}><LoadingBar /></td></tr>}>
-                <DriverRows />
-              </Suspense>
-            </tbody>
-          </CardTable>
+          <Card title="Fuel Delivery">
+            <Table>
+              <thead>
+                <tr>
+                  <HeadingCell>Driver</HeadingCell>
+                  <HeadingCell>Status</HeadingCell>
+                  <HeadingCell>Gasoline</HeadingCell>
+                  <HeadingCell>Benzene</HeadingCell>
+                  <HeadingCell>Joined At</HeadingCell>
+                  <HeadingCell>Actions</HeadingCell>
+                </tr>
+              </thead>
+              <tbody>
+                <Suspense fallback={<tr><td colSpan={5}><LoadingBar /></td></tr>}>
+                  <DriverRows />
+                </Suspense>
+              </tbody>
+            </Table>
+          </Card>
         </div>
       </div>
     </>
