@@ -1,5 +1,5 @@
 import PropTypes from "prop-types";
-import LoadingSpinner from './LoadingSpinner';
+import LoadingSpinner from './LoadingSpinner.js';
 
 export default function LoadingPage({ text }) {
     return (

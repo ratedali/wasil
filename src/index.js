@@ -7,8 +7,8 @@ import 'react-app-polyfill/stable';
 import React from "react";
 import ReactDOM from "react-dom";
 import { FirebaseAppProvider } from 'reactfire';
-import App from './App';
-import firebaseConfig from './firebaseConfig';
+import App from './App.js';
+import firebaseConfig from './firebaseConfig.js';
 
 ReactDOM.render(
   <FirebaseAppProvider firebaseConfig={firebaseConfig} suspense={true}>
