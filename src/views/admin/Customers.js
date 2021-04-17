@@ -5,8 +5,9 @@ import Cell from "components/Table/Cell.js";
 import HeadingCell from "components/Table/HeadingCell.js";
 import RowHeadingCell from "components/Table/RowHeadingCell.js";
 import Table from "components/Table/Table.js";
+import TablePagination from "components/Table/TablePagination.js";
 import { format } from "date-fns/fp";
-import React, { Suspense } from "react";
+import React, { Suspense, useState } from "react";
 import { Link } from "react-router-dom";
 import { useFirestore, useFirestoreCollection, useFirestoreDocData } from "reactfire";
 
@@ -36,7 +37,7 @@ function LoadingCard() {
       <Table title="Customers">
         <thead>
           <tr>
-            {headings.map(heading => <HeadingCell>{heading}</HeadingCell>)}
+            {headings.map(heading => <HeadingCell key={heading}>{heading}</HeadingCell>)}
           </tr>
         </thead>
         <tbody>
@@ -47,27 +48,33 @@ function LoadingCard() {
   );
 }
 
-function CustomersCard({ page }) {
+function CustomersCard() {
   const query = useFirestore()
     .collection('users')
-    .orderBy('joinedAt', 'desc')
-    .limit(10);
+    .orderBy('joinedAt', 'desc');
   const { data: collection } = useFirestoreCollection(query);
+  const [page, setPage] = useState(1);
+  const numRows = 10;
+  const numPages = Math.ceil(collection.docs.length / numRows);
+  const nextPage = () => setPage(page => Math.min(page + 1, numPages));
+  const prevPage = () => setPage(page => Math.max(1, page - 1));
   return (
     <Card title="Customers">
       <Table>
         <thead>
           <tr>
-            {headings.map(heading => <HeadingCell>{heading}</HeadingCell>)}
+            {headings.map(heading => <HeadingCell key={heading}>{heading}</HeadingCell>)}
           </tr>
         </thead>
         <tbody>
-          {collection.docs.map(doc => (
-            <Customer key={doc.id} doc={doc} />
-          ))}
+          {collection
+            .docs
+            .slice((page - 1) * numRows, page * numRows)
+            .map(doc => <Customer key={doc.id} doc={doc} />)}
         </tbody>
       </Table>
       <hr />
+      <TablePagination current={page} total={numPages} onNext={nextPage} onPrev={prevPage} />
     </Card>
   );
 }

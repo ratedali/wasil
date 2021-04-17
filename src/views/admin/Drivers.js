@@ -1,54 +1,87 @@
 import classNames from "classnames";
 import Card from "components/Cards/Card.js";
-import Table from "components/Table/Table.js";
 import TableDropdown from "components/Dropdowns/TableDropdown.js";
 import LoadingBar from "components/Loading/LoadingBar.js";
 import Cell from "components/Table/Cell.js";
 import HeadingCell from "components/Table/HeadingCell.js";
 import RowHeadingCell from "components/Table/RowHeadingCell.js";
+import Table from "components/Table/Table.js";
+import TablePagination from "components/Table/TablePagination";
 import { format } from "date-fns/fp";
-import React, { Suspense } from "react";
+import React, { Suspense, useState } from "react";
 import { Link } from "react-router-dom";
 import { useFirestore, useFirestoreCollection, useFirestoreDocData } from "reactfire";
 
+const headings = [
+  "Driver",
+  "Status",
+  "Gasoline",
+  "Benzene",
+  "Joined At",
+  "Actions",
+]
 export default function Drivers() {
   return (
     <>
       <div className="flex flex-wrap mt-4">
         <div className="w-full mb-12 px-4">
-          <Card title="Fuel Delivery">
-            <Table>
-              <thead>
-                <tr>
-                  <HeadingCell>Driver</HeadingCell>
-                  <HeadingCell>Status</HeadingCell>
-                  <HeadingCell>Gasoline</HeadingCell>
-                  <HeadingCell>Benzene</HeadingCell>
-                  <HeadingCell>Joined At</HeadingCell>
-                  <HeadingCell>Actions</HeadingCell>
-                </tr>
-              </thead>
-              <tbody>
-                <Suspense fallback={<tr><td colSpan={5}><LoadingBar /></td></tr>}>
-                  <DriverRows />
-                </Suspense>
-              </tbody>
-            </Table>
-          </Card>
+          <Suspense fallback={<LoadingCard />}>
+            <DriversCard />
+          </Suspense>
         </div>
       </div>
     </>
   );
 }
 
+function LoadingCard() {
+  return (
+    <Card title="Fuel Delivery">
+      <Table>
+        <thead>
+          <tr>
+            {headings.map(heading => <HeadingCell key={heading}>{heading}</HeadingCell>)}
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td colSpan={5}><LoadingBar /></td></tr>
+        </tbody>
+      </Table>
+    </Card>
 
-function DriverRows() {
+  );
+}
+
+
+function DriversCard() {
   const query = useFirestore()
     .collection('refillDrivers')
-    .orderBy('joinedAt', 'desc')
-    .limit(10);
+    .orderBy('joinedAt', 'desc');
   const { data: collection } = useFirestoreCollection(query);
-  return collection.docs.map(doc => <Driver key={doc.id} doc={doc} />);
+  const [page, setPage] = useState(1);
+  const numRows = 10;
+  const numPages = Math.ceil(collection.docs.length / numRows);
+  const nextPage = () => setPage(page => Math.min(numPages, page + 1));
+  const prevPage = () => setPage(page => Math.max(1, page - 1));
+  return (
+    <Card title="Fuel Delivery">
+      <Table>
+        <thead>
+          <tr>
+            {headings.map(heading => <HeadingCell key={heading}>{heading}</HeadingCell>)}
+          </tr>
+        </thead>
+        <tbody>
+          {collection
+            .docs
+            .slice((page - 1) * numRows, page * numRows)
+            .map(doc => <Driver key={doc.id} doc={doc} />)}
+        </tbody>
+      </Table>
+      <hr />
+      <TablePagination current={page} total={numPages} onNext={nextPage} onPrev={prevPage} />
+    </Card>
+  );
 }
 
 function Driver({ doc }) {
