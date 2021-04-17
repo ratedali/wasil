@@ -81,15 +81,17 @@ function Order({ doc }) {
       </Cell>
       <Cell></Cell>
       <Cell>
-        <i className={classNames(
-          "fas fa-circle mr-2",
-          {
-            "text-lightBlue-300": order.status === 'new',
-            "text-gray-300": order.status === 'unconfirmed',
-            "text-yellow-300 ": order.status === 'in-progress',
-            "text-emerald-300 ": order.status === 'finished',
-          }
-        )}></i> {statusLabels.get(order.status)}
+        <Link to={`/admin/orders/${doc.id}`}>
+          <i className={classNames(
+            "fas fa-circle mr-2",
+            {
+              "text-lightBlue-300": order.status === 'new',
+              "text-gray-300": order.status === 'unconfirmed',
+              "text-yellow-300 ": order.status === 'in-progress',
+              "text-emerald-300 ": order.status === 'finished',
+            }
+          )}></i> {statusLabels.get(order.status)}
+        </Link>
       </Cell>
       <Cell action={true}>
         <TableDropdown />
