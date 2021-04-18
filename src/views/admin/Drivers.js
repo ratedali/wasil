@@ -64,7 +64,14 @@ function DriversCard() {
   const nextPage = () => setPage(page => Math.min(numPages, page + 1));
   const prevPage = () => setPage(page => Math.max(1, page - 1));
   return (
-    <Card title="Fuel Delivery">
+    <Card
+      title="Fuel Delivery"
+      action={
+        <Link to="drivers/new" role="button"
+          className="py-2 px-4 rounded border-0 shadow uppercase font-bold text-xs text-white bg-violet-500 focus:outline-none hover:bg-violet-400 hover:shadow-md active:bg-violet-600">
+          Add
+        </Link>
+      }>
       <Table>
         <thead>
           <tr>

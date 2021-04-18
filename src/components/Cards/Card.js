@@ -29,7 +29,9 @@ export default function Card({ title, color, children, action }) {
                                 {title}
                             </h3>
                         </div>
-                        {action ?? null}
+                        <div className="mr-2">
+                            {action ?? null}
+                        </div>
                     </div>
                 </div>
                 <div className="block w-full overflow-x-auto">
