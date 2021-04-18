@@ -96,7 +96,7 @@ function Driver({ doc }) {
   const formatDate = format('dd/MM/yyyy');
   return (
     <tr>
-      <RowHeadingCell avatar={require("assets/img/bootstrap.jpg").default}><Link to={`/admin/drivers/${doc.id}`}>{driver.name}</Link></RowHeadingCell>
+      <RowHeadingCell avatar={require("assets/img/bootstrap.jpg").default}><Link to={`drivers/id/${doc.id}`}>{driver.name}</Link></RowHeadingCell>
       <Cell>
         <i className={classNames("fas fa-circle mr-2", {
           "text-emerald-500": driver.available,

@@ -84,7 +84,7 @@ function Customer({ doc }) {
   const formatDate = format('dd/MM/yyyy');
   return (
     <tr key={doc.id}>
-      <RowHeadingCell avatar={require("assets/img/bootstrap.jpg").default}><Link to={`/admin/customers/${doc.id}`}>{customer.name}</Link></RowHeadingCell>
+      <RowHeadingCell avatar={require("assets/img/bootstrap.jpg").default}><Link to={`customers/id/${doc.id}`}>{customer.name}</Link></RowHeadingCell>
       <Cell>{customer.phone}</Cell>
       <Cell>{
         customer.joinedAt

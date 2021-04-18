@@ -102,14 +102,14 @@ function Order({ doc }) {
   const { data: driver } = useFirestoreDocData(firestore.doc(`refillDrivers/${order.orderId}`));
   return (
     <tr>
-      <Cell><Link to={`/admin/customers/${order.customerId}`}>{customer?.name}</Link></Cell>
+      <Cell><Link to={`customers/id/${order.customerId}`}>{customer?.name}</Link></Cell>
       <Cell>{order.amount}L</Cell>
       <Cell>{typeLabels.get(order.fuelType)}</Cell>
       <Cell>{order.price > 0 ? `${order.price} SDG` : '-'}</Cell>
       <Cell>
         {order.driverId
           ? (
-            <Link to={`/admin/drivers/${order.driverId}`}>
+            <Link to={`drivers/id/${order.driverId}`}>
               {order.driverId ? driver.name : null}
             </Link>
           )
@@ -117,7 +117,7 @@ function Order({ doc }) {
       </Cell>
       <Cell></Cell>
       <Cell>
-        <Link to={`/admin/orders/${doc.id}`}>
+        <Link to={`orders/id/${doc.id}`}>
           <i className={classNames(
             "fas fa-circle mr-2",
             {
