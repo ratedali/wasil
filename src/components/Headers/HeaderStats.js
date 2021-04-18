@@ -1,6 +1,6 @@
 // components
 import CardStats from "components/Cards/CardStats.js";
-import { addDays, endOfDay, startOfDay, startOfMonth, startOfWeek, subDays, subMonths, subWeeks } from "date-fns";
+import { addDays, endOfDay, startOfDay, startOfMonth, startOfWeek, subDays, subWeeks } from "date-fns";
 import React, { useEffect, useState } from "react";
 import { useFirestore, useFirestoreCollection } from "reactfire";
 
