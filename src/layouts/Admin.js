@@ -10,6 +10,7 @@ import DriverDetails from 'views/admin/DriverDetails.js';
 import Drivers from 'views/admin/Drivers';
 import Inventories from 'views/admin/Inventories';
 import Maps from "views/admin/Maps.js";
+import NewDriver from "views/admin/NewDriver.js";
 import OrderDetails from 'views/admin/OrderDetails.js';
 import Orders from 'views/admin/Orders';
 import Settings from "views/admin/Settings.js";
@@ -28,11 +29,12 @@ export default function Admin() {
           <Switch>
             <Route path="/admin/dashboard" exact component={Dashboard} />
             <Route path="/admin/customers" exact component={Customers} />
-            <Route path="/admin/customers/:id" exact component={CustomerDetails} />
+            <Route path="/admin/customers/id/:id" exact component={CustomerDetails} />
             <Route path="/admin/drivers" exact component={Drivers} />
-            <Route path="/admin/drivers/:id" exact component={DriverDetails} />
+            <Route path="/admin/drivers/new" exact component={NewDriver} />
+            <Route path="/admin/drivers/id/:id" exact component={DriverDetails} />
             <Route path="/admin/orders" exact component={Orders} />
-            <Route path="/admin/orders/:id" exact component={OrderDetails} />
+            <Route path="/admin/orders/id/:id" exact component={OrderDetails} />
             <Route path="/admin/inventories" exact component={Inventories} />
             <Route path="/admin/maps" exact component={Maps} />
             <Route path="/admin/settings" exact component={Settings} />
