@@ -1,5 +1,5 @@
 import classNames from "classnames";
-import { TableColor } from "components/Cards/CardTable.js";
+import { TableColor } from "./Table.js";
 import { useContext } from "react";
 
 export default function HeadingCell({ children }) {

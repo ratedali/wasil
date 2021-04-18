@@ -1,50 +1,82 @@
-import CardTable from 'components/Cards/CardTable.js';
-import TableDropdown from 'components/Dropdowns/TableDropdown.js';
-import LoadingBar from 'components/Loading/LoadingBar.js';
-import Cell from 'components/Table/Cell.js';
-import HeadingCell from 'components/Table/HeadingCell.js';
-import RowHeadingCell from 'components/Table/RowHeadingCell.js';
+import Card from "components/Cards/Card.js";
+import TableDropdown from "components/Dropdowns/TableDropdown.js";
+import LoadingBar from "components/Loading/LoadingBar.js";
+import Cell from "components/Table/Cell.js";
+import HeadingCell from "components/Table/HeadingCell.js";
+import RowHeadingCell from "components/Table/RowHeadingCell.js";
+import Table from "components/Table/Table.js";
+import TablePagination from "components/Table/TablePagination.js";
 import { format } from "date-fns/fp";
-import React, { Suspense } from 'react';
-import { Link } from 'react-router-dom';
-import { useFirestore, useFirestoreCollection, useFirestoreDocData } from 'reactfire';
+import React, { Suspense, useState } from "react";
+import { Link } from "react-router-dom";
+import { useFirestore, useFirestoreCollection, useFirestoreDocData } from "reactfire";
 
+const headings = [
+  "Customer",
+  "Phone",
+  "Joined At",
+  "Last Login",
+  "Actions"
+];
 
 export default function Customers() {
-
   return (
     <div className="flex flex-wrap mt-4">
       <div className="w-full mb-12 px-4">
-        <CardTable title="Customers">
-          <thead>
-            <tr>
-              <HeadingCell>Customer</HeadingCell>
-              <HeadingCell>Phone</HeadingCell>
-              <HeadingCell>Joined At</HeadingCell>
-              <HeadingCell>Last Login</HeadingCell>
-              <HeadingCell>Actions</HeadingCell>
-            </tr>
-          </thead>
-          <tbody>
-            <Suspense fallback={<tr><td colSpan={5}><LoadingBar /></td></tr>}>
-              <CustomerRows />
-            </Suspense>
-          </tbody>
-        </CardTable>
+        <Suspense fallback={<LoadingCard />}>
+          <CustomersCard />
+        </Suspense>
       </div>
     </div>
   );
 }
 
-function CustomerRows() {
+function LoadingCard() {
+  return (
+    <Card>
+      <Table title="Customers">
+        <thead>
+          <tr>
+            {headings.map(heading => <HeadingCell key={heading}>{heading}</HeadingCell>)}
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td colSpan={5}><LoadingBar /></td></tr>
+        </tbody>
+      </Table>
+    </Card>
+  );
+}
+
+function CustomersCard() {
   const query = useFirestore()
     .collection('users')
-    .orderBy('joinedAt', 'desc')
-    .limit(10);
+    .orderBy('joinedAt', 'desc');
   const { data: collection } = useFirestoreCollection(query);
-  return collection
-    .docs
-    .map(doc => <Customer key={doc.id} doc={doc} />);
+  const [page, setPage] = useState(1);
+  const numRows = 10;
+  const numPages = Math.ceil(collection.docs.length / numRows);
+  const nextPage = () => setPage(page => Math.min(page + 1, numPages));
+  const prevPage = () => setPage(page => Math.max(1, page - 1));
+  return (
+    <Card title="Customers">
+      <Table>
+        <thead>
+          <tr>
+            {headings.map(heading => <HeadingCell key={heading}>{heading}</HeadingCell>)}
+          </tr>
+        </thead>
+        <tbody>
+          {collection
+            .docs
+            .slice((page - 1) * numRows, page * numRows)
+            .map(doc => <Customer key={doc.id} doc={doc} />)}
+        </tbody>
+      </Table>
+      <hr />
+      <TablePagination current={page} total={numPages} onNext={nextPage} onPrev={prevPage} />
+    </Card>
+  );
 }
 
 function Customer({ doc }) {

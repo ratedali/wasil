@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { useContext } from 'react';
-import { TableColor } from '../Cards/CardTable.js';
+import { TableColor } from './Table.js';
 
 export default function RowHeadingCell({ avatar, children }) {
     const color = useContext(TableColor);
