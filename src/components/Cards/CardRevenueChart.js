@@ -1,8 +1,17 @@
 import CardLineChart from "components/Cards/CardLineChart.js";
 import { eachMonthOfInterval, endOfMonth, format, startOfYear } from "date-fns/fp";
+import { Suspense } from "react";
 import { useFirestore, useFirestoreCollectionData } from "reactfire";
 
+
 export default function CardRevenueChart() {
+    return (
+        <Suspense fallback={<LoadingCard />}>
+            <Chart />
+        </Suspense>
+    )
+}
+function Chart() {
     const today = new Date();
     const months = eachMonthOfInterval({
         start: startOfYear(today),
@@ -49,5 +58,14 @@ export default function CardRevenueChart() {
         <CardLineChart title="Order Revenue" subtitle="Monthly Overview"
             xlabel="Month" labels={labels}
             ylabel="Revenue" datasets={datasets} />
+    );
+}
+
+function LoadingCard() {
+    return (
+        <CardLineChart
+            title="Order Revenue" subtitle="Monthly Overview"
+            xlabel="Month" ylabel="Revenue"
+        />
     );
 }

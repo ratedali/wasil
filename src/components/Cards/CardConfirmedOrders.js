@@ -16,7 +16,7 @@ const headings = [
   "Actions"
 ]
 
-export default function ConfirmedOrdersCard() {
+export default function CardConfirmedOrders() {
   return (
     <>
       <Suspense fallback={<LoadingCard />}>

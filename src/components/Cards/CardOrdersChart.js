@@ -1,8 +1,17 @@
 import CardBarChart from "components/Cards/CardBarChart.js";
 import { eachMonthOfInterval, endOfMonth, format, startOfYear } from "date-fns/fp";
+import { Suspense } from "react";
 import { useFirestore, useFirestoreCollectionData } from "reactfire";
 
 export default function CardOrdersChart() {
+    return (
+        <Suspense fallback={<LoadingCard />}>
+            <Chart />
+        </Suspense>
+    )
+}
+
+function Chart() {
     const today = new Date();
     const months = eachMonthOfInterval({
         start: startOfYear(today),
@@ -46,5 +55,14 @@ export default function CardOrdersChart() {
                 },
 
             ]} />
+    );
+}
+
+function LoadingCard() {
+    return (
+        <CardBarChart
+            title="Total Orders" subtitle="Monthly Performance"
+            xlabel="Month" ylabel="Orders"
+        />
     );
 }

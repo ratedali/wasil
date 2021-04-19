@@ -16,7 +16,7 @@ const headings = [
   "Actions"
 ]
 
-export default function CardPageVisits() {
+export default function CardNewOrders() {
   return (
     <>
       <Suspense fallback={<LoadingCard />}>
