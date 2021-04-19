@@ -2,7 +2,7 @@ import CardOrdersChart from "components/Cards/CardOrdersChart.js";
 // components
 import CardPageVisits from "components/Cards/CardPageVisits.js";
 import CardRevenueChart from "components/Cards/CardRevenueChart.js";
-import CardSocialTraffic from "components/Cards/CardSocialTraffic.js";
+import CardConfirmedOrders from "components/Cards/CardSocialTraffic.js";
 import React from "react";
 
 
@@ -22,7 +22,7 @@ export default function Dashboard() {
           <CardPageVisits />
         </div>
         <div className="w-full xl:w-4/12 px-4">
-          <CardSocialTraffic />
+          <CardConfirmedOrders />
         </div>
       </div>
     </>
