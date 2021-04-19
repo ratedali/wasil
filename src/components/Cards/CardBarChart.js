@@ -10,40 +10,15 @@ export default function CardBarChart({
     let config = {
       type: "bar",
       data: {
-        labels: labels ?? [
-          "January",
-          "February",
-          "March",
-          "April",
-          "May",
-          "June",
-          "July",
-        ],
-        datasets: datasets ?? [
-          {
-            label: new Date().getFullYear(),
-            backgroundColor: "#ed64a6",
-            borderColor: "#ed64a6",
-            data: [30, 78, 56, 34, 100, 45, 13],
-            fill: false,
-            barThickness: 8,
-          },
-          {
-            label: new Date().getFullYear() - 1,
-            fill: false,
-            backgroundColor: "#4c51bf",
-            borderColor: "#4c51bf",
-            data: [27, 68, 86, 74, 10, 4, 87],
-            barThickness: 8,
-          },
-        ],
+        labels: labels ?? [],
+        datasets: datasets ?? [],
       },
       options: {
         maintainAspectRatio: false,
         responsive: true,
         title: {
           display: false,
-          text: title ?? "Orders Chart",
+          text: title ?? "Bar Chart",
         },
         tooltips: {
           mode: "index",
@@ -66,7 +41,7 @@ export default function CardBarChart({
               display: false,
               scaleLabel: {
                 display: true,
-                labelString: xlabel ?? "Month",
+                labelString: xlabel ?? "X",
               },
               gridLines: {
                 borderDash: [2],
@@ -83,7 +58,7 @@ export default function CardBarChart({
               display: true,
               scaleLabel: {
                 display: false,
-                labelString: ylabel ?? "Value",
+                labelString: ylabel ?? "Y",
               },
               gridLines: {
                 borderDash: [2],
@@ -113,10 +88,10 @@ export default function CardBarChart({
           <div className="flex flex-wrap items-center">
             <div className="relative w-full max-w-full flex-grow flex-1">
               <h6 className="uppercase text-blueGray-400 mb-1 text-xs font-semibold">
-                {subtitle ?? 'Performance'}
+                {subtitle ?? 'Data Details'}
               </h6>
               <h2 className="text-blueGray-700 text-xl font-semibold">
-                {title ?? 'Total Orders'}
+                {title ?? 'Bar Chart'}
               </h2>
             </div>
           </div>

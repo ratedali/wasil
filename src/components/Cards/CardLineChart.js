@@ -10,38 +10,15 @@ export default function CardLineChart({
     var config = {
       type: "line",
       data: {
-        labels: labels ?? [
-          "January",
-          "February",
-          "March",
-          "April",
-          "May",
-          "June",
-          "July",
-        ],
-        datasets: datasets ?? [
-          {
-            label: new Date().getFullYear(),
-            backgroundColor: "#4c51bf",
-            borderColor: "#4c51bf",
-            data: [65, 78, 66, 44, 56, 67, 75],
-            fill: false,
-          },
-          {
-            label: new Date().getFullYear() - 1,
-            fill: false,
-            backgroundColor: "#fff",
-            borderColor: "#fff",
-            data: [40, 68, 86, 74, 56, 60, 87],
-          },
-        ],
+        labels: labels ?? [],
+        datasets: datasets ?? [],
       },
       options: {
         maintainAspectRatio: false,
         responsive: true,
         title: {
           display: false,
-          text: title ?? "Sales Charts",
+          text: title ?? "Line Chart",
           fontColor: "white",
         },
         legend: {
@@ -68,7 +45,7 @@ export default function CardLineChart({
               display: true,
               scaleLabel: {
                 display: false,
-                labelString: xlabel ?? "Month",
+                labelString: xlabel ?? "X",
                 fontColor: "white",
               },
               gridLines: {
@@ -90,7 +67,7 @@ export default function CardLineChart({
               display: true,
               scaleLabel: {
                 display: false,
-                labelString: ylabel ?? "Value",
+                labelString: ylabel ?? "Y",
                 fontColor: "white",
               },
               gridLines: {
@@ -121,9 +98,9 @@ export default function CardLineChart({
           <div className="flex flex-wrap items-center">
             <div className="relative w-full max-w-full flex-grow flex-1">
               <h6 className="uppercase text-blueGray-100 mb-1 text-xs font-semibold">
-                {subtitle ?? "Overview"}
+                {subtitle ?? "Data Details"}
               </h6>
-              <h2 className="text-white text-xl font-semibold">{title ?? "Sales Value"}</h2>
+              <h2 className="text-white text-xl font-semibold">{title ?? "Line Chart"}</h2>
             </div>
           </div>
         </div>

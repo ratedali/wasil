@@ -1,5 +1,6 @@
 import React from "react";
 import PropTypes from "prop-types";
+import classNames from "classnames";
 
 export default function CardStats({
   statSubtitle,
@@ -38,13 +39,14 @@ export default function CardStats({
           <p className="text-sm text-blueGray-400 mt-4">
             <span className={statPercentColor + " mr-2"}>
               <i
-                className={
-                  statArrow === "up"
-                    ? "fas fa-arrow-up"
-                    : statArrow === "down"
-                    ? "fas fa-arrow-down"
-                    : ""
-                }
+                className={classNames(
+                  "fas",
+                  {
+                    "fa-arrow-up": statArrow === "up",
+                    "fa-arrow-down": statArrow === "down",
+                    "fa-minus": statArrow === "none"
+                  }
+                )}
               ></i>{" "}
               {statPercent}%
             </span>
