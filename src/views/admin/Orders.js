@@ -7,11 +7,11 @@ import HeadingCell from "components/Table/HeadingCell.js";
 import Table from "components/Table/Table.js";
 import TablePagination from "components/Table/TablePagination.js";
 import React, { Suspense, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import {
   useFirestore,
   useFirestoreCollection,
-  useFirestoreDocData,
+  useFirestoreDocData
 } from "reactfire";
 
 const headings = [
@@ -26,12 +26,14 @@ const headings = [
 ];
 
 export default function Orders() {
+  const location = useLocation();
+  const params = new URLSearchParams(location.search);
   return (
     <>
       <div className="flex flex-wrap mt-4">
         <div className="w-full mb-12 px-4">
           <Suspense fallback={<LoadingCard />}>
-            <OrdersCard />
+            <OrdersCard status={params.get('status') ?? 'all'} />
           </Suspense>
         </div>
       </div>
@@ -62,9 +64,13 @@ function LoadingCard() {
   );
 }
 
-function OrdersCard() {
-  const firestore = useFirestore();
-  const query = firestore.collection("fuelOrders").limit(10);
+function OrdersCard({ status }) {
+  let query = useFirestore()
+    .collection("fuelOrders")
+    .orderBy("lastModified", "desc");
+  if (status !== 'all') {
+    query = query.where('status', '==', status);
+  }
   const { data: collection } = useFirestoreCollection(query);
   const [page, setPage] = useState(1);
   const numRows = 10;
