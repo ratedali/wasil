@@ -11,6 +11,7 @@ import Drivers from 'views/admin/Drivers';
 import Inventories from 'views/admin/Inventories';
 import Maps from "views/admin/Maps.js";
 import NewDriver from "views/admin/NewDriver.js";
+import OrderApprove from "views/admin/OrderApprove.js";
 import OrderDetails from 'views/admin/OrderDetails.js';
 import Orders from 'views/admin/Orders';
 import Settings from "views/admin/Settings.js";
@@ -37,6 +38,7 @@ export default function Admin() {
             <Route path="/admin/orders/id/:id" exact component={OrderDetails} />
             <Route path="/admin/inventories" exact component={Inventories} />
             <Route path="/admin/maps" exact component={Maps} />
+            <Route path="/admin/approve/:id" exact component={OrderApprove} />
             <Route path="/admin/settings" exact component={Settings} />
             <Redirect from="/admin" to="/admin/dashboard" />
           </Switch>
