@@ -18,12 +18,6 @@ export default function OrderApprove() {
   const dropoff =
     order.dropLocation.latitude + ", " + order.dropLocation.longitude;
 
-  const statusLabels = new Map([
-    ["unconfirmed", "Unconfirmed"],
-    ["in-progress", "In Progress"],
-    ["finished", "Finished"],
-  ]);
-
   return (
     <>
       <div className="relative flex flex-col min-w-0 break-words bg-white w-full mb-6 shadow-lg rounded">
@@ -82,32 +76,29 @@ export default function OrderApprove() {
 }
 
 function EditPrice({ order }) {
-  var editable = false;
-  if (order.state !== "khartoum") {
-    editable = true;
-  }
+  var disabled = order.state === "khartoum";
 
   const initialState = order.deliveryPrice;
-  const [Delievriy, setDelievriy] = useState(initialState);
-  const [valid, setValid] = useState(!editable);
+  const [delivery, setDelivery] = useState(initialState);
+  const [valid, setValid] = useState(false);
 
-  const inputHandler = (e) => {
-    setDelievriy(e.target.value);
-    if (isNaN(Delievriy)) {
+  const onDeliveryChange = (e) => {
+    setDelivery(e.target.value);
+    if (Number.isNaN(delivery)) {
       setValid(false);
     } else {
       setValid(true);
     }
   };
 
-  const clickHandler = () => {
+  const save = () => {
     console.log("update DataBase: ", order);
   };
 
   return (
     <>
       <input
-        type="text"
+        type="number"
         className={classNames(
           "border-0 px-3 py-3 rounded shadow focus:outline-none w-full",
           "focus:ring ease-linear transition-all duration-150",
@@ -117,19 +108,18 @@ function EditPrice({ order }) {
             "ring ring-red-500 focus:ring-red-500 placeholder-red-300 text-red-600": !valid,
           },
           {
-            "bg-white": !editable,
-            "bg-trueGray-100": editable,
+            "bg-white": !disabled,
+            "bg-trueGray-100": disabled,
           }
         )}
-        name="dilevery"
-        onChange={inputHandler}
-        disabled={editable}
-        value={Delievriy}
+        onChange={onDeliveryChange}
+        disabled={disabled}
+        value={delivery}
       />
 
       <button
         type="button"
-        onClick={clickHandler}
+        onClick={save}
         disabled={!valid}
         className={classNames(
           "py-2 px-4 rounded border-0 shadow hover:shadow-md focus:outline-none",
@@ -140,7 +130,7 @@ function EditPrice({ order }) {
           }
         )}
       >
-        approve
+        Approve
       </button>
     </>
   );

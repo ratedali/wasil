@@ -26,12 +26,6 @@ export default function OrderAssign() {
   const dropoff =
     order.dropLocation.latitude + ", " + order.dropLocation.longitude;
 
-  const statusLabels = new Map([
-    ["unconfirmed", "Unconfirmed"],
-    ["in-progress", "In Progress"],
-    ["finished", "Finished"],
-  ]);
-
   return (
     <>
       <div className="relative flex flex-col min-w-0 break-words bg-white w-full mb-6 shadow-lg rounded">
