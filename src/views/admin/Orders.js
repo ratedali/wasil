@@ -113,6 +113,8 @@ const typeLabels = new Map([
 const statusLabels = new Map([
   ["new", "New"],
   ["unconfirmed", "Unconfirmed"],
+  ["confirmed", "Confirmed"],
+  ["rejected", "Rejected"],
   ["in-progress", "In Progress"],
   ["finished", "Finished"],
 ]);
@@ -148,10 +150,12 @@ function Order({ doc }) {
         <Link to={`orders/id/${doc.id}`}>
           <i
             className={classNames("fas fa-circle mr-2", {
-              "text-lightBlue-300": order.status === "new",
-              "text-gray-300": order.status === "unconfirmed",
-              "text-yellow-300 ": order.status === "in-progress",
-              "text-emerald-300 ": order.status === "finished",
+              "text-lightBlue-500": order.status === "new",
+              "text-gray-500": order.status === "unconfirmed",
+              "text-teal-500": order.status === "confirmed",
+              "text-red-500": order.status === "rejected",
+              "text-yellow-500 ": order.status === "in-progress",
+              "text-green-500 ": order.status === "finished",
             })}
           ></i>{" "}
           {statusLabels.get(order.status)}
