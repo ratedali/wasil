@@ -27,3 +27,6 @@ commit.sh
 # environment vars
 .env
 !.env.example
+
+# firebase
+.firebaserc
