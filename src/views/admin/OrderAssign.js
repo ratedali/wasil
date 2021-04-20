@@ -1,9 +1,11 @@
-import React, { useState } from "react";
+import React, { useState, Fragment } from 'react';
+
+import Select from 'react-select';
 import { useParams } from "react-router-dom";
 import {
   useFirestore,
   useFirestoreDocData,
-  useFirestoreCollectionData,
+  useFirestoreCollection,
 } from "reactfire";
 
 import classNames from "classnames";
@@ -18,10 +20,6 @@ export default function OrderAssign() {
   const queryCustomer = useFirestore().doc(`users/${order.customerId}`);
   const { data: customer } = useFirestoreDocData(queryCustomer);
 
-  const queryDeliveries = useFirestore()
-    .collection("refillDrivers")
-    .where("available", "==", true);
-  const { data: drivers } = useFirestoreCollectionData(queryDeliveries);
 
   const dropoff =
     order.dropLocation.latitude + ", " + order.dropLocation.longitude;
@@ -39,19 +37,7 @@ export default function OrderAssign() {
               Gas Price: {order.price}
             </div>
 
-            <div className="mb-2 text-blueGray-600">
-              <div className="w-full lg:w-12/12 px-4 lg:order-1">
-                <div className="flex justify-center py-4 lg:pt-7 pt-8">
-                  <div className="mr-4 p-3 text-center">
-                    <i className="fas fa-dollar-sign mr-2 text-lg text-blueGray-400"></i>
-                    Assign Driver:
-                  </div>
-                  <div className="mr-4 p-3 text-center">
-                    <SelectDriver drivers={drivers} />
-                  </div>
-                </div>
-              </div>
-            </div>
+
             <div className="mb-2 text-blueGray-600">
               <i className="fas fa-calendar-alt mr-2 text-lg text-blueGray-400"></i>
               Created At
@@ -75,6 +61,12 @@ export default function OrderAssign() {
               <i className="fas fa-map-marker-alt mr-2 text-lg text-blueGray-400"></i>
               {dropoff}
             </div>
+            <div className="mb-2 text-blueGray-600">
+              Assign Driver:
+            </div>
+            <div className="mb-2 text-blueGray-600">
+              <SelectDriver id={id} />
+            </div>
             <div className="mb-12 text-blueGray-600"></div>
           </div>
         </div>
@@ -83,47 +75,81 @@ export default function OrderAssign() {
   );
 }
 
-function SelectDriver({ drivers }) {
-  const { id } = useParams();
+function SelectDriver({ id }) {
+
+
+  const queryDeliveries = useFirestore()
+    .collection("refillDrivers")
+    .where("available", "==", true);
+  const { data } = useFirestoreCollection(queryDeliveries);
+  var driverNames = []
+  const Addtolist = (doc) => {
+    const { data: { name }, } = useFirestoreDocData(doc.ref);
+    driverNames.push({ value: doc.id, label: name })
+  }
+  data.docs.map((doc) => (Addtolist(doc)));
 
   const [selectedDriver, setSelectedDriver] = useState(null);
   const [selected, setSelected] = useState(false);
+  const [assinged, setAssinged] = useState(false);
 
-  const inputHandler = (e) => {
-    console.log("e: ", e.target.value);
-    setSelectedDriver(e.target.value);
-    setSelected(true);
+  const handleChange = selectedDriver => {
+    setSelectedDriver(selectedDriver)
+    setSelected(true)
+    console.log("S: ", selectedDriver);
   };
-
-  const clickHandler = () => {
+  const firestore = useFirestore();
+  const clickHandler = async () => {
+    await firestore.doc(`fuelOrders/${id}`).update("driverId", selectedDriver.value);
+    await firestore.doc(`fuelOrders/${id}`).update("status", "in-progress");
+    await firestore.doc(`refillDrivers/${selectedDriver.value}`).update("available", false);
+    setAssinged(true)
     console.log("update DataBase: ", selectedDriver);
   };
 
+  const DriverList = ({ drivers }) => {
+    return (
+      <Fragment>
+        <Select
+          className="basic-single"
+          classNamePrefix="select"
+          defaultValue={selectedDriver}
+          isDisabled={assinged}
+          name="Drivers"
+          options={drivers}
+          onChange={handleChange}
+        />
+
+      </Fragment>
+    );
+
+  }
+
   return (
     <>
-      <select onChange={inputHandler} value={selectedDriver}>
-        {drivers.map((driver) => (
-          <option value={driver.name}>{driver.name}</option>
-        ))}
-      </select>
 
-      <Link to={`/admin/orders/id/${id}`}>
-        <button
-          type="button"
-          onClick={clickHandler}
-          disabled={!selected}
-          className={classNames(
-            "py-2 px-4 rounded border-0 shadow hover:shadow-md focus:outline-none",
-            "uppercase font-bold text-xs text-white",
-            {
-              "bg-violet-500 hover:bg-violet-400 active:bg-violet-600": selected,
-              "bg-trueGray-200": !selected,
-            }
-          )}
-        >
-          assign
+      <DriverList drivers={driverNames} />
+
+      <div className="flex justify-center py-4 lg:pt-7 pt-8">
+
+        <Link to={`/admin/orders/id/${id}`}>
+          <button
+            type="button"
+            onClick={clickHandler}
+            disabled={!selected}
+            className={classNames(
+              "py-2 px-4 rounded border-0 shadow hover:shadow-md focus:outline-none",
+              "uppercase font-bold text-xs text-white",
+              {
+                "bg-violet-500 hover:bg-violet-400 active:bg-violet-600": selected,
+                "bg-trueGray-200": !selected,
+              }
+            )}
+          >
+            assign
         </button>
-      </Link>
+        </Link>
+      </div>
     </>
   );
 }
