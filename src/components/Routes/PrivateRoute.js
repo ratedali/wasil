@@ -49,13 +49,13 @@ function AdminCheck({ user, fallback, children }) {
     const { data: doc } = useFirestoreDocData(results[0].ref);
     if (doc.admin) {
         return (
-            <AuthContext.Provider value={{ admin: true, user }}>
+            <AuthContext.Provider value={{ admin: true, user: doc }}>
                 {children}
             </AuthContext.Provider>
         );
     } else {
         return (
-            <AuthContext.Provider value={{ admin: false, user }}>
+            <AuthContext.Provider value={{ admin: false, user: doc }}>
                 {fallback}
             </AuthContext.Provider>
         );
