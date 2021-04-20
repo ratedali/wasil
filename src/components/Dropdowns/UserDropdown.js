@@ -1,5 +1,7 @@
-import React from "react";
 import { createPopper } from "@popperjs/core";
+import React, { Suspense } from "react";
+import { useHistory } from "react-router";
+import { useAuth, useFirestore, useFirestoreCollectionData, useUser } from "reactfire";
 
 const UserDropdown = () => {
   // dropdown props
@@ -28,11 +30,7 @@ const UserDropdown = () => {
       >
         <div className="items-center flex">
           <span className="w-12 h-12 text-sm text-white bg-blueGray-200 inline-flex items-center justify-center rounded-full">
-            <img
-              alt="..."
-              className="w-full rounded-full align-middle border-none shadow-lg"
-              src={require("assets/img/team-1-800x800.jpg").default}
-            />
+            <i className="fas fa-user"></i>
           </span>
         </div>
       </a>
@@ -43,46 +41,65 @@ const UserDropdown = () => {
           "bg-white text-base z-50 float-left py-2 list-none text-left rounded shadow-lg min-w-48"
         }
       >
-        <a
-          href="#pablo"
-          className={
-            "text-sm py-2 px-4 font-normal block w-full whitespace-nowrap bg-transparent text-blueGray-700"
-          }
-          onClick={(e) => e.preventDefault()}
-        >
-          Action
-        </a>
-        <a
-          href="#pablo"
-          className={
-            "text-sm py-2 px-4 font-normal block w-full whitespace-nowrap bg-transparent text-blueGray-700"
-          }
-          onClick={(e) => e.preventDefault()}
-        >
-          Another action
-        </a>
-        <a
-          href="#pablo"
-          className={
-            "text-sm py-2 px-4 font-normal block w-full whitespace-nowrap bg-transparent text-blueGray-700"
-          }
-          onClick={(e) => e.preventDefault()}
-        >
-          Something else here
-        </a>
+        <Suspense fallback={<MenuItem>...</MenuItem>}>
+          <UserInfo />
+        </Suspense>
         <div className="h-0 my-2 border border-solid border-blueGray-100" />
-        <a
-          href="#pablo"
-          className={
-            "text-sm py-2 px-4 font-normal block w-full whitespace-nowrap bg-transparent text-blueGray-700"
-          }
-          onClick={(e) => e.preventDefault()}
-        >
-          Seprated link
-        </a>
+        <Suspense fallback={<MenuItem>Sign Out</MenuItem>}>
+          <SignOut />
+        </Suspense>
       </div>
     </>
   );
 };
+
+function UserInfo() {
+  const { data: user } = useUser();
+  const ref = useFirestore()
+    .collection(`staff`)
+    .where('uid', '==', user?.uid);
+  const { data: results } = useFirestoreCollectionData(ref);
+  const { email, admin } = results[0];
+  if (user == null) {
+    return null;
+  }
+  return (
+    <>
+      <MenuItem>
+        {email}
+      </MenuItem>
+      <MenuItem>
+        {admin ? "Administrator" : "Regular User"}
+      </MenuItem>
+    </>
+  );
+}
+
+function SignOut() {
+  const auth = useAuth();
+  const history = useHistory();
+  const logout = async () => {
+    await auth.signOut();
+    history.replace('/auth')
+  }
+  return (
+    <MenuItem onClick={logout}>Sign Out</MenuItem>
+  );
+}
+
+
+function MenuItem({ onClick = () => { }, children }) {
+  return (
+    <a
+      href="#pablo"
+      className={
+        "text-sm py-2 px-4 font-normal block w-full whitespace-nowrap bg-transparent text-blueGray-700"
+      }
+      onClick={(e) => { e.preventDefault(); onClick(); }}
+    >
+      {children}
+    </a>
+  );
+}
 
 export default UserDropdown;

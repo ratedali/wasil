@@ -1,5 +1,6 @@
 import HeaderStats from "components/Headers/HeaderStats.js";
 import AdminNavbar from "components/Navbars/AdminNavbar.js";
+import PrivateRoute from "components/Routes/PrivateRoute.js";
 import Sidebar from "components/Sidebar/Sidebar.js";
 import React from "react";
 import { Redirect, Route, Switch } from "react-router-dom";
@@ -13,13 +14,15 @@ import Maps from "views/admin/Maps.js";
 import NewDriver from "views/admin/NewDriver.js";
 import OrderApprove from "views/admin/OrderApprove.js";
 import OrderAssign from "views/admin/OrderAssign.js";
+import NewStaff from "views/admin/NewStaff.js";
 import OrderDetails from 'views/admin/OrderDetails.js';
 import Orders from 'views/admin/Orders';
 import Settings from "views/admin/Settings.js";
+import Staff from "views/admin/Staff.js";
 
 
 export default function Admin() {
-  
+
   return (
     <>
       <Sidebar />
@@ -37,10 +40,12 @@ export default function Admin() {
             <Route path="/admin/drivers/id/:id" exact component={DriverDetails} />
             <Route path="/admin/orders" exact component={Orders} />
             <Route path="/admin/orders/id/:id" exact component={OrderDetails} />
-            <Route path="/admin/inventories" exact component={Inventories} />
-            <Route path="/admin/maps" exact component={Maps} />
             <Route path="/admin/orders/approve/:id" exact component={OrderApprove} />
             <Route path="/admin/orders/assign/:id" exact component={OrderAssign} />
+            <Route path="/admin/inventories" exact component={Inventories} />
+            <PrivateRoute path="/admin/staff" admin exact component={Staff} />
+            <PrivateRoute path="/admin/staff/new" admin exact component={NewStaff} />
+            <Route path="/admin/maps" exact component={Maps} />
             <Route path="/admin/settings" exact component={Settings} />
             <Redirect from="/admin" to="/admin/dashboard" />
           </Switch>

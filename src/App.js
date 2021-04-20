@@ -1,4 +1,4 @@
-import PrivateRoute from 'components/PrivateRoute.js';
+import PrivateRoute from "components/Routes/PrivateRoute.js";
 import Admin from "layouts/Admin.js";
 import Auth from "layouts/Auth.js";
 import { BrowserRouter, Redirect, Route, Switch } from "react-router-dom";

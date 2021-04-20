@@ -1,10 +1,11 @@
-import React, { useState } from "react";
-import { Link, useHistory, useLocation } from "react-router-dom";
-import { useAuth } from 'reactfire';
 import classnames from "classnames";
+import React, { useState } from "react";
+import { useHistory, useLocation } from "react-router-dom";
+import { useAuth, useFirestore } from 'reactfire';
 
 export default function Login() {
   const auth = useAuth();
+  const firestore = useFirestore();
   const location = useLocation();
   const history = useHistory();
   const [credentials, setCredentails] = useState({
@@ -24,12 +25,18 @@ export default function Login() {
   };
   const handleSignIn = e => {
     async function signIn({ email, password }) {
-      setError({});
       try {
+        const results = await firestore
+          .collection("staff")
+          .where("email", "==", email)
+          .get();
+        if (results.empty) {
+          throw new Error('Unknown email address');
+        }
         await auth.signInWithEmailAndPassword(email, password);
         history.replace(location.state?.from ?? '/');
       } catch (err) {
-        switch (err.code) {
+        switch (err?.code) {
           case 'auth/invalid-email':
             setError({ email: 'Invalid email address.' });
             break;
@@ -52,6 +59,7 @@ export default function Login() {
       }
       return setError(error);
     }
+    setError({});
     signIn(credentials);
   }
   return (
@@ -138,11 +146,6 @@ export default function Login() {
                 >
                   <small>Forgot password?</small>
                 </a>
-              </div>
-              <div className="w-1/2 text-right">
-                <Link to="/auth/register" className="text-blueGray-200">
-                  <small>Create new account</small>
-                </Link>
               </div>
             </div>
           </div>
