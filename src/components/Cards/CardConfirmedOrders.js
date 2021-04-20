@@ -92,7 +92,7 @@ function Order({ doc }) {
       <Cell>{order.price}</Cell>
       <Cell>{order.deliveryPrice ?? '-'}</Cell>
       <Cell action={true}>
-        <Link role="button" to={`orders/approve/${doc.id}`}
+        <Link role="button" to={`orders/assign/${doc.id}`}
           className="py-1 px-3 rounded border-2 text-indigo-600 border-indigo-500 uppercase hover:bg-indigo-100 focus:outline-none active:bg-indigo-200 transition">
           Assign
         </Link>
