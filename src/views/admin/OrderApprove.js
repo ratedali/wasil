@@ -37,19 +37,7 @@ export default function OrderApprove() {
               Gas Price: {order.price}
             </div>
 
-            <div className="mb-2 text-blueGray-600">
-              <div className="w-full lg:w-12/12 px-4 lg:order-1">
-                <div className="flex justify-center py-4 lg:pt-7 pt-8">
-                  <div className="mr-4 p-3 text-center">
-                    <i className="fas fa-dollar-sign mr-2 text-lg text-blueGray-400"></i>
-                    Dilevriy Price (for orders outside Khartoum):
-                  </div>
-                  <div className="mr-4 p-3 text-center">
-                    <EditPrice order={order} />
-                  </div>
-                </div>
-              </div>
-            </div>
+            
             <div className="mb-2 text-blueGray-600">
               <i className="fas fa-calendar-alt mr-2 text-lg text-blueGray-400"></i>
               Created At
@@ -73,6 +61,19 @@ export default function OrderApprove() {
               <i className="fas fa-map-marker-alt mr-2 text-lg text-blueGray-400"></i>
               {dropoff}
             </div>
+            <div className="mb-2 text-blueGray-600">
+              <div className="w-full lg:w-12/12 px-4 lg:order-1">
+                <div className="flex justify-center py-4 lg:pt-7 pt-8">
+                  <div className="mr-4 p-3 text-center">
+                    <i className="fas fa-dollar-sign mr-2 text-lg text-blueGray-400"></i>
+                    Dilevriy Price (for orders outside Khartoum):
+                  </div>
+                  <div className="mr-4 p-3 text-center">
+                    <EditPrice order={order} />
+                  </div>
+                </div>
+              </div>
+            </div>
             <div className="mb-12 text-blueGray-600"></div>
           </div>
         </div>
@@ -81,7 +82,7 @@ export default function OrderApprove() {
   );
 }
 
-function EditPrice({ order }) {
+function EditPrice({order}) {
   var editable = false;
   if (order.state !== "khartoum") {
     editable = true;
@@ -126,6 +127,7 @@ function EditPrice({ order }) {
         disabled={editable}
         value={Delievriy}
       />
+      <div className="flex justify-center py-4 lg:pt-7 pt-8" >
 
       <button
         type="button"
@@ -138,10 +140,11 @@ function EditPrice({ order }) {
             "bg-violet-500 hover:bg-violet-400 active:bg-violet-600": valid,
             "bg-trueGray-200": !valid,
           }
-        )}
-      >
+          )}
+          >
         approve
       </button>
+        </div>
     </>
   );
 }

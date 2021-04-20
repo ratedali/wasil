@@ -45,19 +45,7 @@ export default function OrderAssign() {
               Gas Price: {order.price}
             </div>
 
-            <div className="mb-2 text-blueGray-600">
-              <div className="w-full lg:w-12/12 px-4 lg:order-1">
-                <div className="flex justify-center py-4 lg:pt-7 pt-8">
-                  <div className="mr-4 p-3 text-center">
-                    <i className="fas fa-dollar-sign mr-2 text-lg text-blueGray-400"></i>
-                    Assign Driver:
-                  </div>
-                  <div className="mr-4 p-3 text-center">
-                    <SelectDriver drivers={drivers} />
-                  </div>
-                </div>
-              </div>
-            </div>
+            
             <div className="mb-2 text-blueGray-600">
               <i className="fas fa-calendar-alt mr-2 text-lg text-blueGray-400"></i>
               Created At
@@ -80,6 +68,19 @@ export default function OrderAssign() {
             <div className="mb-2 text-blueGray-600">
               <i className="fas fa-map-marker-alt mr-2 text-lg text-blueGray-400"></i>
               {dropoff}
+            </div>
+            <div className="mb-2 text-blueGray-600">
+              <div className="w-full lg:w-12/12 px-4 lg:order-1">
+                <div className="flex justify-center py-4 lg:pt-7 pt-8">
+                  <div className="mr-4 p-3 text-center">
+                    <i className="fas fa-dollar-sign mr-2 text-lg text-blueGray-400"></i>
+                    Assign Driver:
+                  </div>
+                  <div className="mr-4 p-3 text-center">
+                    <SelectDriver drivers={drivers} />
+                  </div>
+                </div>
+              </div>
             </div>
             <div className="mb-12 text-blueGray-600"></div>
           </div>
@@ -107,11 +108,14 @@ function SelectDriver({ drivers }) {
 
   return (
     <>
+
       <select onChange={inputHandler} value={selectedDriver}>
         {drivers.map((driver) => (
-          <option value={driver.name}>{driver.name}</option>
-        ))}
+          <option  value={driver.name}>{driver.name}</option>
+          ))}
       </select>
+
+      <div className="flex justify-center py-4 lg:pt-7 pt-8">
 
       <Link to={`/admin/orders/id/${id}`}>
         <button
@@ -125,11 +129,12 @@ function SelectDriver({ drivers }) {
               "bg-violet-500 hover:bg-violet-400 active:bg-violet-600": selected,
               "bg-trueGray-200": !selected,
             }
-          )}
-        >
+            )}
+            >
           assign
         </button>
       </Link>
+          </div>
     </>
   );
 }
