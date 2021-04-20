@@ -4,8 +4,6 @@ import { useHistory } from "react-router";
 import { useAuth, useFirestore, useFirestoreCollectionData, useUser } from "reactfire";
 
 const UserDropdown = () => {
-  const auth = useAuth();
-  const history = useHistory();
   // dropdown props
   const [dropdownPopoverShow, setDropdownPopoverShow] = React.useState(false);
   const btnDropdownRef = React.createRef();
@@ -19,10 +17,6 @@ const UserDropdown = () => {
   const closeDropdownPopover = () => {
     setDropdownPopoverShow(false);
   };
-  const logout = async () => {
-    await auth.signOut();
-    history.replace('/auth')
-  }
   return (
     <>
       <a
@@ -51,7 +45,9 @@ const UserDropdown = () => {
           <UserInfo />
         </Suspense>
         <div className="h-0 my-2 border border-solid border-blueGray-100" />
-        <MenuItem onClick={logout}>Sign Out</MenuItem>
+        <Suspense fallback={<MenuItem>Sign Out</MenuItem>}>
+          <SignOut />
+        </Suspense>
       </div>
     </>
   );
@@ -73,9 +69,21 @@ function UserInfo() {
         {email}
       </MenuItem>
       <MenuItem>
-        {admin ? "Administrator" : "Staff"}
+        {admin ? "Administrator" : "Regular User"}
       </MenuItem>
     </>
+  );
+}
+
+function SignOut() {
+  const auth = useAuth();
+  const history = useHistory();
+  const logout = async () => {
+    await auth.signOut();
+    history.replace('/auth')
+  }
+  return (
+    <MenuItem onClick={logout}>Sign Out</MenuItem>
   );
 }
 

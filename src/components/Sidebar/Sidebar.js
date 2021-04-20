@@ -1,13 +1,22 @@
 /*eslint-disable*/
-import React from "react";
-import { Link } from "react-router-dom";
-
+import classNames from 'classnames';
+import AuthContext from "components/AuthContext.js";
 import NotificationDropdown from "components/Dropdowns/NotificationDropdown.js";
 import UserDropdown from "components/Dropdowns/UserDropdown.js";
-import classNames from 'classnames';
+import React, { useContext } from "react";
+import { Link } from "react-router-dom";
+
 
 export default function Sidebar() {
+  const { admin } = useContext(AuthContext);
   const [collapseShow, setCollapseShow] = React.useState("hidden");
+  const adminLinks = [
+    {
+      name: 'Staff',
+      path: '/admin/staff',
+      icon: 'fa-id-card-alt'
+    },
+  ];
   const links = [
     {
       name: 'Dashboard',
@@ -34,6 +43,7 @@ export default function Sidebar() {
       path: '/admin/inventories',
       icon: 'fa-warehouse'
     },
+    ...(admin ? adminLinks : []),
     {
       name: 'Maps',
       path: '/admin/maps',
