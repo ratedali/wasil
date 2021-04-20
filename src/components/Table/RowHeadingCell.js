@@ -34,5 +34,5 @@ export default function RowHeadingCell({ avatar, children }) {
 
 RowHeadingCell.propTypes = {
     avatar: PropTypes.string,
-    children: PropTypes.oneOfType([PropTypes.string, PropTypes.element])
+    children: PropTypes.node,
 }

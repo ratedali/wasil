@@ -72,7 +72,7 @@ CardStats.defaultProps = {
 CardStats.propTypes = {
   statSubtitle: PropTypes.string,
   statTitle: PropTypes.string,
-  statArrow: PropTypes.oneOf(["up", "down"]),
+  statArrow: PropTypes.oneOf(["up", "down", "none"]),
   statPercent: PropTypes.string,
   // can be any of the text color utilities
   // from tailwindcss
