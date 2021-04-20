@@ -2,6 +2,25 @@ const functions = require("firebase-functions");
 const admin = require("firebase-admin");
 admin.initializeApp();
 
+exports.newStaffMember = functions.firestore.document("staff/{orderId}")
+    .onCreate(async (snapshot) => {
+        const staff = snapshot.data();
+        functions.logger.log(`New staff user ${staff.email}`);
+        const user = await admin.auth()
+            .createUser({
+                displayName: `${staff.lastName}, ${staff.firstName}`,
+                email: staff.email,
+                password: staff.password,
+                emailVerified: true,
+            });
+        await admin.auth()
+            .setCustomUserClaims(user.uid, { admin: staff.admin });
+        return snapshot.ref.update({
+            uid: user.uid,
+            password: admin.firestore.FieldValue.delete(),
+        });
+    });
+
 exports.orderStatusNotification = functions.firestore.document("/fuelOrders/{orderId}")
     .onUpdate(async ({ after, before }, context) => {
         const { orderId } = context.params;
