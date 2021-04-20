@@ -4,7 +4,6 @@ import CardOrdersChart from "components/Cards/CardOrdersChart.js";
 import CardRevenueChart from "components/Cards/CardRevenueChart.js";
 import React from "react";
 
-
 export default function Dashboard() {
   return (
     <>

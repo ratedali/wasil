@@ -5,28 +5,27 @@ import HeadingCell from "components/Table/HeadingCell.js";
 import { format } from "date-fns/fp";
 import React, { Suspense } from "react";
 import { Link, useParams } from "react-router-dom";
-import { useFirestore, useFirestoreCollectionData, useFirestoreDocData } from "reactfire";
-
+import {
+  useFirestore,
+  useFirestoreCollectionData,
+  useFirestoreDocData,
+} from "reactfire";
 
 export default function CustomerDetails() {
-
-
-  const { id } = useParams()
-  const querystring = `users/${id}`
-  const query = useFirestore()
-    .doc(querystring)
+  const { id } = useParams();
+  const querystring = `users/${id}`;
+  const query = useFirestore().doc(querystring);
   const { data: customer } = useFirestoreDocData(query);
-  const formatDate = format('dd/MM/yyyy');
-
+  const formatDate = format("dd/MM/yyyy");
 
   const queryOrder = useFirestore()
-    .collection('fuelOrders')
-    .where("customerId", "==", id)
+    .collection("fuelOrders")
+    .where("customerId", "==", id);
   const { data: customerOrders } = useFirestoreCollectionData(queryOrder);
-  var benzeneCount = 0
+  var benzeneCount = 0;
   for (const order of customerOrders) {
     if (order.fuelType == "benzene") {
-      benzeneCount += 1
+      benzeneCount += 1;
     }
   }
 
@@ -39,9 +38,10 @@ export default function CustomerDetails() {
               <div className="py-6 px-3 mt-32 sm:mt-0">
                 <button
                   className="bg-lightBlue-500 active:bg-lightBlue-600 uppercase text-white font-bold hover:shadow-md shadow text-xs px-4 py-2 rounded outline-none focus:outline-none sm:mr-2 mb-1 ease-linear transition-all duration-150"
-                  type="button">
+                  type="button"
+                >
                   Edit
-              </button>
+                </button>
               </div>
             </div>
             <div className="w-full lg:w-7/12 px-4 lg:order-1">
@@ -50,25 +50,19 @@ export default function CustomerDetails() {
                   <span className="text-xl font-bold block uppercase tracking-wide text-blueGray-600">
                     {customerOrders.length}
                   </span>
-                  <span className="text-sm text-blueGray-400">
-                    Orders
-                  </span>
+                  <span className="text-sm text-blueGray-400">Orders</span>
                 </div>
                 <div className="mr-4 p-3 text-center">
                   <span className="text-xl font-bold block uppercase tracking-wide text-blueGray-600">
                     {customerOrders.length - benzeneCount}L
                   </span>
-                  <span className="text-sm text-blueGray-400">
-                    Gasoline
-                  </span>
+                  <span className="text-sm text-blueGray-400">Gasoline</span>
                 </div>
                 <div className="p-3 text-center">
                   <span className="text-xl font-bold block uppercase tracking-wide text-blueGray-600">
                     {benzeneCount}L
                   </span>
-                  <span className="text-sm text-blueGray-400">
-                    Benzene
-                  </span>
+                  <span className="text-sm text-blueGray-400">Benzene</span>
                 </div>
               </div>
             </div>
@@ -87,7 +81,8 @@ export default function CustomerDetails() {
             </div>
             <div className="mb-2 text-blueGray-600">
               <i className="fas fa-calendar-alt mr-2 text-lg text-blueGray-400"></i>
-              Joined at {customer.joinedAt
+              Joined at{" "}
+              {customer.joinedAt
                 ? formatDate(customer.joinedAt.toDate())
                 : null}
             </div>
@@ -125,43 +120,46 @@ export default function CustomerDetails() {
   );
 }
 
-
 function CustomerOrdersRow({ orders }) {
   const typeLabels = new Map([
-    ['benzene', 'Benzene'],
-    ['gasoline', 'Gasoline'],
+    ["benzene", "Benzene"],
+    ["gasoline", "Gasoline"],
   ]);
   const statusLabels = new Map([
-    ['unconfirmed', 'Unconfirmed'],
-    ['in-progress', 'In Progress'],
-    ['finished', 'Finished'],
+    ["unconfirmed", "Unconfirmed"],
+    ["in-progress", "In Progress"],
+    ["finished", "Finished"],
   ]);
   return (
     <tbody>
-      {orders.map(order => (
+      {orders.map((order) => (
         <tr>
-          <Cell><Link to={`/admin/customers/${order.customerId}`}>{order.customerId}</Link></Cell>
+          <Cell>
+            <Link to={`/admin/customers/${order.customerId}`}>
+              {order.customerId}
+            </Link>
+          </Cell>
           <Cell>{order.amount}L</Cell>
           <Cell>{typeLabels.get(order.fuelType)}</Cell>
-          <Cell>{order.price > 0 ? `${order.price} SDG` : '-'}</Cell>
+          <Cell>{order.price > 0 ? `${order.price} SDG` : "-"}</Cell>
           <Cell>
-            <i className={classNames(
-              "fas fa-circle mr-2",
-              {
-                "text-gray-300": order.status === 'new',
-                "text-yellow-300 ": order.status === 'in-progress',
-                "text-emerald-300 ": order.status === 'finished',
-              }
-            )}></i> {statusLabels.get(order.status)}
+            <i
+              className={classNames("fas fa-circle mr-2", {
+                "text-gray-300": order.status === "new",
+                "text-yellow-300 ": order.status === "in-progress",
+                "text-emerald-300 ": order.status === "finished",
+              })}
+            ></i>{" "}
+            {statusLabels.get(order.status)}
           </Cell>
           <Cell>
-            {order.driverId
-              ? (
-                <Link to={`/admin/drivers/${order.driverId}`}>
-                  {order.driverId}
-                </Link>
-              )
-              : '-'}
+            {order.driverId ? (
+              <Link to={`/admin/drivers/${order.driverId}`}>
+                {order.driverId}
+              </Link>
+            ) : (
+              "-"
+            )}
           </Cell>
         </tr>
       ))}

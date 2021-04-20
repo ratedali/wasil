@@ -8,7 +8,11 @@ import Table from "components/Table/Table.js";
 import TablePagination from "components/Table/TablePagination.js";
 import React, { Suspense, useState } from "react";
 import { Link } from "react-router-dom";
-import { useFirestore, useFirestoreCollection, useFirestoreDocData } from "reactfire";
+import {
+  useFirestore,
+  useFirestoreCollection,
+  useFirestoreDocData,
+} from "reactfire";
 
 const headings = [
   "Customer",
@@ -37,15 +41,21 @@ export default function Orders() {
 
 function LoadingCard() {
   return (
-    <Card title='Fuel Orders'>
+    <Card title="Fuel Orders">
       <Table>
         <thead>
           <tr>
-            {headings.map(heading => <HeadingCell key={heading}>{heading}</HeadingCell>)}
+            {headings.map((heading) => (
+              <HeadingCell key={heading}>{heading}</HeadingCell>
+            ))}
           </tr>
         </thead>
         <tbody>
-          <tr><td colSpan={5}><LoadingBar /></td></tr>
+          <tr>
+            <td colSpan={5}>
+              <LoadingBar />
+            </td>
+          </tr>
         </tbody>
       </Table>
     </Card>
@@ -54,79 +64,91 @@ function LoadingCard() {
 
 function OrdersCard() {
   const firestore = useFirestore();
-  const query = firestore
-    .collection('fuelOrders')
-    .limit(10);
+  const query = firestore.collection("fuelOrders").limit(10);
   const { data: collection } = useFirestoreCollection(query);
   const [page, setPage] = useState(1);
   const numRows = 10;
   const numPages = Math.ceil(collection.docs.length / numRows);
-  const nextPage = () => setPage(page => Math.min(numPages, page + 1));
-  const prevPage = () => setPage(page => Math.min(1, page - 1));
+  const nextPage = () => setPage((page) => Math.min(numPages, page + 1));
+  const prevPage = () => setPage((page) => Math.min(1, page - 1));
   return (
-    <Card title='Fuel Orders'>
+    <Card title="Fuel Orders">
       <Table>
         <thead>
           <tr>
-            {headings.map(heading => <HeadingCell key={heading}>{heading}</HeadingCell>)}
+            {headings.map((heading) => (
+              <HeadingCell key={heading}>{heading}</HeadingCell>
+            ))}
           </tr>
         </thead>
         <tbody>
-          {collection
-            .docs
+          {collection.docs
             .slice((page - 1) * numRows, page * numRows)
-            .map(doc => <Order key={doc.id} doc={doc} />)}
+            .map((doc) => (
+              <Order key={doc.id} doc={doc} />
+            ))}
         </tbody>
       </Table>
       <hr />
-      <TablePagination current={page} total={numPages} onNext={nextPage} onPrev={prevPage} />
+      <TablePagination
+        current={page}
+        total={numPages}
+        onNext={nextPage}
+        onPrev={prevPage}
+      />
     </Card>
   );
 }
 
 const typeLabels = new Map([
-  ['benzene', 'Benzene'],
-  ['gasoline', 'Gasoline'],
+  ["benzene", "Benzene"],
+  ["gasoline", "Gasoline"],
 ]);
 const statusLabels = new Map([
-  ['new', 'New'],
-  ['unconfirmed', 'Unconfirmed'],
-  ['in-progress', 'In Progress'],
-  ['finished', 'Finished'],
+  ["new", "New"],
+  ["unconfirmed", "Unconfirmed"],
+  ["in-progress", "In Progress"],
+  ["finished", "Finished"],
 ]);
 
 function Order({ doc }) {
   const firestore = useFirestore();
   const { data: order } = useFirestoreDocData(doc.ref);
-  const { data: customer } = useFirestoreDocData(firestore.doc(`users/${order.customerId}`));
-  const { data: driver } = useFirestoreDocData(firestore.doc(`refillDrivers/${order.orderId}`));
+  const { data: customer } = useFirestoreDocData(
+    firestore.doc(`users/${order.customerId}`)
+  );
+  const { data: driver } = useFirestoreDocData(
+    firestore.doc(`refillDrivers/${order.orderId}`)
+  );
   return (
     <tr>
-      <Cell><Link to={`customers/id/${order.customerId}`}>{customer?.name}</Link></Cell>
+      <Cell>
+        <Link to={`customers/id/${order.customerId}`}>{customer?.name}</Link>
+      </Cell>
       <Cell>{order.amount}L</Cell>
       <Cell>{typeLabels.get(order.fuelType)}</Cell>
-      <Cell>{order.price > 0 ? `${order.price} SDG` : '-'}</Cell>
+      <Cell>{order.price > 0 ? `${order.price} SDG` : "-"}</Cell>
       <Cell>
-        {order.driverId
-          ? (
-            <Link to={`drivers/id/${order.driverId}`}>
-              {order.driverId ? driver.name : null}
-            </Link>
-          )
-          : '-'}
+        {order.driverId ? (
+          <Link to={`drivers/id/${order.driverId}`}>
+            {order.driverId ? driver.name : null}
+          </Link>
+        ) : (
+          "-"
+        )}
       </Cell>
       <Cell></Cell>
       <Cell>
         <Link to={`orders/id/${doc.id}`}>
-          <i className={classNames(
-            "fas fa-circle mr-2",
-            {
-              "text-lightBlue-300": order.status === 'new',
-              "text-gray-300": order.status === 'unconfirmed',
-              "text-yellow-300 ": order.status === 'in-progress',
-              "text-emerald-300 ": order.status === 'finished',
-            }
-          )}></i> {statusLabels.get(order.status)}
+          <i
+            className={classNames("fas fa-circle mr-2", {
+              "text-lightBlue-300": order.status === "new",
+              "text-gray-300": order.status === "unconfirmed",
+              "text-yellow-300 ": order.status === "in-progress",
+              "text-emerald-300 ": order.status === "finished",
+            })}
+          ></i>{" "}
+          {statusLabels.get(order.status)}
         </Link>
       </Cell>
       <Cell action={true}>

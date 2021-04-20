@@ -1,11 +1,9 @@
 import classNames from "classnames";
 import React from "react";
-import { Link, useParams } from "react-router-dom"
+import { Link, useParams } from "react-router-dom";
 import { useFirestore, useFirestoreDocData } from "reactfire";
 
 export default function OrderDetails() {
-
-
   const { id } = useParams();
   const querystring = `fuelOrders/${id}`;
   const query = useFirestore().doc(querystring);
@@ -17,15 +15,14 @@ export default function OrderDetails() {
   const queryCustomer = useFirestore().doc(`users/${order.customerId}`);
   const { data: customer } = useFirestoreDocData(queryCustomer);
 
-  const dropoff = order.dropLocation.latitude + ", " + order.dropLocation.longitude;
+  const dropoff =
+    order.dropLocation.latitude + ", " + order.dropLocation.longitude;
 
   const statusLabels = new Map([
-    ['unconfirmed', 'Unconfirmed'],
-    ['in-progress', 'In Progress'],
-    ['finished', 'Finished'],
+    ["unconfirmed", "Unconfirmed"],
+    ["in-progress", "In Progress"],
+    ["finished", "Finished"],
   ]);
-  
-
 
   return (
     <>
@@ -37,9 +34,10 @@ export default function OrderDetails() {
                 <Link to={`/admin/approve/${order.driverId}`}>
                   <button
                     className="bg-lightBlue-500 active:bg-lightBlue-600 uppercase text-white font-bold hover:shadow-md shadow text-xs px-4 py-2 rounded outline-none focus:outline-none sm:mr-2 mb-1 ease-linear transition-all duration-150"
-                    type="button">
+                    type="button"
+                  >
                     Edit
-                </button>
+                  </button>
                 </Link>
               </div>
             </div>
@@ -47,14 +45,13 @@ export default function OrderDetails() {
               <div className="flex justify-center py-4 lg:pt-7 pt-8">
                 <div className="mr-20 p-3 text-center">
                   <span className="text-xl font-bold block uppercase tracking-wide text-blueGray-600">
-                    <i className={classNames(
-                      "fas fa-circle mr-2",
-                      {
-                        "text-gray-300": order.status === 'new',
-                        "text-yellow-300 ": order.status === 'in-progress',
-                        "text-emerald-300 ": order.status === 'finished',
-                      }
-                    )}></i>
+                    <i
+                      className={classNames("fas fa-circle mr-2", {
+                        "text-gray-300": order.status === "new",
+                        "text-yellow-300 ": order.status === "in-progress",
+                        "text-emerald-300 ": order.status === "finished",
+                      })}
+                    ></i>
                   </span>
                   <span className="text-sm text-blueGray-400">
                     {statusLabels.get(order.status)}
@@ -96,11 +93,10 @@ export default function OrderDetails() {
             <div className="mb-2 text-blueGray-600">
               <i className="fas fa-truck mr-2 text-lg text-blueGray-400"></i>
               <Link to={`/admin/drivers/${order.driverId}`}>
-                {(driver.name == null) ? "Not Set" : driver.name}
+                {driver.name == null ? "Not Set" : driver.name}
               </Link>
             </div>
-            <div className="mb-12 text-blueGray-600">
-            </div>
+            <div className="mb-12 text-blueGray-600"></div>
           </div>
         </div>
       </div>
