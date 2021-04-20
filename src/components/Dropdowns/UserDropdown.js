@@ -61,12 +61,14 @@ function UserInfo() {
   const { data: user } = useUser();
   const ref = useFirestore()
     .collection(`staff`)
-    .where('uid', '==', user.uid);
+    .where('uid', '==', user?.uid);
   const { data: results } = useFirestoreCollectionData(ref);
   const { email, admin } = results[0];
+  if (user == null) {
+    return null;
+  }
   return (
     <>
-
       <MenuItem>
         {email}
       </MenuItem>
