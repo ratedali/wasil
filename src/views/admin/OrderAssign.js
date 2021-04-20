@@ -1,13 +1,16 @@
-import React, { useState } from "react";
+import React, { useState, Fragment } from 'react';
+
+import Select from 'react-select';
 import { useParams } from "react-router-dom";
 import {
   useFirestore,
   useFirestoreDocData,
-  useFirestoreCollectionData,
+  useFirestoreCollection,
 } from "reactfire";
 
 import classNames from "classnames";
 import { Link } from "react-router-dom";
+import { set } from "date-fns/esm";
 
 export default function OrderAssign() {
   const { id } = useParams();
@@ -18,10 +21,6 @@ export default function OrderAssign() {
   const queryCustomer = useFirestore().doc(`users/${order.customerId}`);
   const { data: customer } = useFirestoreDocData(queryCustomer);
 
-  const queryDeliveries = useFirestore()
-    .collection("refillDrivers")
-    .where("available", "==", true);
-  const { data: drivers } = useFirestoreCollectionData(queryDeliveries);
 
   const dropoff =
     order.dropLocation.latitude + ", " + order.dropLocation.longitude;
@@ -70,17 +69,10 @@ export default function OrderAssign() {
               {dropoff}
             </div>
             <div className="mb-2 text-blueGray-600">
-              <div className="w-full lg:w-12/12 px-4 lg:order-1">
-                <div className="flex justify-center py-4 lg:pt-7 pt-8">
-                  <div className="mr-4 p-3 text-center">
-                    <i className="fas fa-dollar-sign mr-2 text-lg text-blueGray-400"></i>
-                    Assign Driver:
-                  </div>
-                  <div className="mr-4 p-3 text-center">
-                    <SelectDriver drivers={drivers} />
-                  </div>
-                </div>
-              </div>
+              Assign Driver:
+            </div>
+            <div className="mb-2 text-blueGray-600">
+              <SelectDriver id={id} />
             </div>
             <div className="mb-12 text-blueGray-600"></div>
           </div>
@@ -90,30 +82,60 @@ export default function OrderAssign() {
   );
 }
 
-function SelectDriver({ drivers }) {
-  const { id } = useParams();
+function SelectDriver({ id }) {
+  
+
+  const queryDeliveries = useFirestore()
+    .collection("refillDrivers")
+    .where("available", "==", true);
+  const { data } = useFirestoreCollection(queryDeliveries);
+  var driverNames =[]
+  const Addtolist = (doc) =>{
+    const { data: { name },} = useFirestoreDocData(doc.ref);
+    driverNames.push({value: doc.id, label: name})
+  }
+  data.docs.map((doc) => (Addtolist(doc)));
 
   const [selectedDriver, setSelectedDriver] = useState(null);
   const [selected, setSelected] = useState(false);
+  const [assinged, setAssinged] = useState(false);
 
-  const inputHandler = (e) => {
-    console.log("e: ", e.target.value);
-    setSelectedDriver(e.target.value);
-    setSelected(true);
+  const handleChange = selectedDriver => {
+    setSelectedDriver(selectedDriver)
+    setSelected(true)
+    console.log("S: ", selectedDriver);
   };
-
-  const clickHandler = () => {
+  const firestore = useFirestore();
+  const clickHandler = async () => {
+    await firestore.doc(`fuelOrders/${id}`).update("driverId", selectedDriver.value);
+    await firestore.doc(`fuelOrders/${id}`).update("status", "in-progress");
+    await firestore.doc(`refillDrivers/${selectedDriver.value}`).update("available", false);
+    setAssinged(true)
     console.log("update DataBase: ", selectedDriver);
   };
+
+  const DriverList = ({drivers}) => {
+    return (
+      <Fragment>
+        <Select
+          className="basic-single"
+          classNamePrefix="select"
+          defaultValue={selectedDriver}
+          isDisabled={assinged}
+          name="Drivers"
+          options={drivers}
+          onChange={handleChange}
+        />
+        
+      </Fragment>
+    );
+    
+  }
 
   return (
     <>
 
-      <select onChange={inputHandler} value={selectedDriver}>
-        {drivers.map((driver) => (
-          <option  value={driver.name}>{driver.name}</option>
-          ))}
-      </select>
+      <DriverList drivers={driverNames }/>
 
       <div className="flex justify-center py-4 lg:pt-7 pt-8">
 
@@ -138,3 +160,4 @@ function SelectDriver({ drivers }) {
     </>
   );
 }
+

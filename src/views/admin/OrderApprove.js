@@ -83,6 +83,8 @@ export default function OrderApprove() {
 }
 
 function EditPrice({order}) {
+  const { id } = useParams();
+
   var editable = false;
   if (order.state !== "khartoum") {
     editable = true;
@@ -100,9 +102,10 @@ function EditPrice({order}) {
       setValid(true);
     }
   };
-
-  const clickHandler = () => {
-    console.log("update DataBase: ", order);
+  const firestore = useFirestore();
+  const clickHandler = async () => {
+    await firestore.doc(`fuelOrders/${id}`).update("deliveryPrice", Delievriy);
+    await firestore.doc(`fuelOrders/${id}`).update("status", "confirmed");
   };
 
   return (
@@ -128,7 +131,7 @@ function EditPrice({order}) {
         value={Delievriy}
       />
       <div className="flex justify-center py-4 lg:pt-7 pt-8" >
-
+      
       <button
         type="button"
         onClick={clickHandler}
