@@ -12,6 +12,7 @@ import { Link } from "react-router-dom";
 import { useFirestore, useFirestoreCollection, useFirestoreDocData } from "reactfire";
 
 const headings = [
+  "Username",
   "Email",
   "Role",
   "Created At",
@@ -21,19 +22,21 @@ const headings = [
 
 export default function Staff() {
   return (
-    <div className="flex flex-wrap mt-4">
-      <div className="w-full mb-12 px-4">
-        <Suspense fallback={<LoadingCard />}>
-          <StaffCard />
-        </Suspense>
+    <>
+      <div className="flex flex-wrap mt-4">
+        <div className="w-full mb-12 px-4">
+          <Suspense fallback={<LoadingCard />}>
+            <StaffCard />
+          </Suspense>
+        </div>
       </div>
-    </div>
+    </>
   );
 }
 
 function LoadingCard() {
   return (
-    <Card title="Staff">
+    <Card title="System Staff">
       <Table>
         <thead>
           <tr>
@@ -45,8 +48,10 @@ function LoadingCard() {
         </tbody>
       </Table>
     </Card>
+
   );
 }
+
 
 function StaffCard() {
   const query = useFirestore()
@@ -56,10 +61,18 @@ function StaffCard() {
   const [page, setPage] = useState(1);
   const numRows = 10;
   const numPages = Math.ceil(collection.docs.length / numRows);
-  const nextPage = () => setPage(page => Math.min(page + 1, numPages));
+  const nextPage = () => setPage(page => Math.min(numPages, page + 1));
   const prevPage = () => setPage(page => Math.max(1, page - 1));
   return (
-    <Card title="Staff">
+    <Card
+      title="System Staff"
+      action={
+        <Link to="staff/new" role="button"
+          className="py-2 px-4 rounded border-0 shadow uppercase font-bold text-xs text-white bg-violet-500 focus:outline-none hover:bg-violet-400 hover:shadow-md active:bg-violet-600">
+          Add
+        </Link>
+      }
+    >
       <Table>
         <thead>
           <tr>
@@ -70,7 +83,7 @@ function StaffCard() {
           {collection
             .docs
             .slice((page - 1) * numRows, page * numRows)
-            .map(doc => <StaffUser key={doc.id} doc={doc} />)}
+            .map(doc => <StaffMember key={doc.id} doc={doc} />)}
         </tbody>
       </Table>
       <hr />
@@ -79,27 +92,19 @@ function StaffCard() {
   );
 }
 
-function StaffUser({ doc }) {
-  const { data: staff } = useFirestoreDocData(doc.ref);
+function StaffMember({ doc }) {
+  const { data: staff } = useFirestoreDocData(doc.ref)
   const formatDate = format('dd/MM/yyyy');
   return (
-    <tr key={doc.id}>
-      <RowHeadingCell><Link to={`staff/id/${doc.id}`}>{staff.email}</Link></RowHeadingCell>
+    <tr>
+      <RowHeadingCell>{staff.username}</RowHeadingCell>
+      <Cell>{staff.email}</Cell>
       <Cell>{staff.admin ? "Administrator" : "Regular"}</Cell>
-      <Cell>{
-        staff.createdAt
-          ? formatDate(staff.createdAt.toDate())
-          : null
-      }</Cell>
-      <Cell>{
-        staff.lastLogin
-          ? formatDate(staff.lastLogin.toDate())
-          : null
-      }</Cell>
+      <Cell>{staff.createdAt ? formatDate(staff.createdAt.toDate()) : '-'}</Cell>
+      <Cell>{staff.lastLogin ? formatDate(staff.lastLogin.toDate()) : '-'}</Cell>
       <Cell action={true}>
         <TableDropdown />
       </Cell>
     </tr>
-
   );
 }
