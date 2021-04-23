@@ -49,5 +49,6 @@ Card.defaultProps = {
 
 Card.propTypes = {
     title: PropTypes.node.isRequired,
+    action: PropTypes.node,
     color: PropTypes.oneOf(["light", "dark"]),
 }

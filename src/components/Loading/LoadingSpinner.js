@@ -8,7 +8,9 @@ export default function LoadingSpinner({ height, width, children }) {
                 "loader rounded-full border-8 border-t-8 border-gray-200",
                 "animate-spin",
                 `h-${height} w-${width}`
-            )}></div>
+            )}>
+                &nbsp;
+            </div>
             <div className="absolute text-violet-500 uppercase font-bold text-2xl animate-pulse">{children}</div>
         </>
 
