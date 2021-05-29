@@ -78,7 +78,18 @@ function OrdersCard({ status }) {
   const nextPage = () => setPage((page) => Math.min(numPages, page + 1));
   const prevPage = () => setPage((page) => Math.min(1, page - 1));
   return (
-    <Card title="Fuel Orders">
+    <Card
+      title="Fuel Orders"
+      action={
+        <Link
+          to="orders/new"
+          role="button"
+          className="py-2 px-4 rounded border-0 shadow uppercase font-bold text-xs text-white bg-violet-500 focus:outline-none hover:bg-violet-400 hover:shadow-md active:bg-violet-600"
+        >
+          New
+        </Link>
+      }
+    >
       <Table>
         <thead>
           <tr>
