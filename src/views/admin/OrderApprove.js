@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useParams } from "react-router-dom";
+import { useHistory, useParams } from "react-router-dom";
 import { useFirestore, useFirestoreDocData } from "reactfire";
 
 import classNames from "classnames";
@@ -14,9 +14,6 @@ export default function OrderApprove() {
 
   const queryCustomer = useFirestore().doc(`users/${order.customerId}`);
   const { data: customer } = useFirestoreDocData(queryCustomer);
-
-  const dropoff =
-    order.dropLocation.latitude + ", " + order.dropLocation.longitude;
 
   return (
     <>
@@ -53,7 +50,9 @@ export default function OrderApprove() {
 
             <div className="mb-2 text-blueGray-600">
               <i className="fas fa-map-marker-alt mr-2 text-lg text-blueGray-400"></i>
-              {dropoff}
+              {order.dropLocation != null
+                ? `${order.dropLocation.latitude}, ${order.dropLocation.longitude}`
+                : "N/A"}
             </div>
             <div className="mb-2 text-blueGray-600">
               <div className="w-full lg:w-12/12 px-4 lg:order-1">
@@ -79,11 +78,12 @@ export default function OrderApprove() {
 function EditPrice({ order }) {
   const { id } = useParams();
 
-  var disabled = order.state === "khartoum";
 
   const initialState = order.deliveryPrice;
   const [delivery, setDelivery] = useState(initialState);
-  const [valid, setValid] = useState(false);
+  const history = useHistory();
+  const [valid, setValid] = useState(!Number.isNaN(delivery));
+  const disabled = order.state !== "khartoum" && !delivery;
 
   const onDeliveryChange = (e) => {
     setDelivery(e.target.value);
@@ -97,8 +97,9 @@ function EditPrice({ order }) {
   const save = async () => {
     await firestore.doc(`fuelOrders/${id}`).update({
       deliveryPrice: delivery,
-      status: "confirmed",
+      status: "unconfirmed",
     });
+    history.push(`/admin/orders/id/${id}`);
   };
 
   return (

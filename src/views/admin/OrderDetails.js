@@ -9,14 +9,8 @@ export default function OrderDetails() {
   const query = useFirestore().doc(querystring);
   const { data: order } = useFirestoreDocData(query);
 
-  const queryDriver = useFirestore().doc(`refillDrivers/${order.driverId}`);
-  const { data: driver } = useFirestoreDocData(queryDriver);
-
   const queryCustomer = useFirestore().doc(`users/${order.customerId}`);
   const { data: customer } = useFirestoreDocData(queryCustomer);
-
-  const dropoff =
-    order.dropLocation.latitude + ", " + order.dropLocation.longitude;
 
   const statusLabels = new Map([
     ["unconfirmed", "Unconfirmed"],
@@ -32,7 +26,7 @@ export default function OrderDetails() {
             <div className="w-full lg:w-6/12 px-4 lg:order-2 lg:text-right lg:self-center">
               <div className="py-6 px-3 mt-32 sm:mt-0">
                 <Link to={`/admin/approve/${order.driverId}`}>
-                  <EditButton status={order.status}/>
+                  <EditButton status={order.status} />
                 </Link>
               </div>
             </div>
@@ -61,7 +55,9 @@ export default function OrderDetails() {
             </h5>
             <div className="mb-2 text-blueGray-600">
               <i className="fas fa-map-marker-alt mr-2 text-lg text-blueGray-400"></i>
-              {dropoff}
+              {order.dropLocation != null
+                ? `${order.dropLocation.latitude}, ${order.dropLocation.longitude}`
+                : "N/A"}
             </div>
             <div className="mb-2 text-blueGray-600">
               <i className="fas fa-dollar-sign mr-2 text-lg text-blueGray-400"></i>
@@ -87,9 +83,9 @@ export default function OrderDetails() {
             </div>
             <div className="mb-2 text-blueGray-600">
               <i className="fas fa-truck mr-2 text-lg text-blueGray-400"></i>
-              <Link to={`/admin/drivers/${order.driverId}`}>
+              {/* <Link to={`/admin/drivers/${order.driverId}`}>
                 {driver.name == null ? "Not Set" : driver.name}
-              </Link>
+              </Link> */}
             </div>
             <div className="mb-12 text-blueGray-600"></div>
           </div>
@@ -99,43 +95,43 @@ export default function OrderDetails() {
   );
 }
 
-function EditButton({status}) {
+function EditButton({ status }) {
   const { id } = useParams();
   if (status === "new") {
-    return(
+    return (
       <Link to={`/admin/orders/approve/${id}`}>
-      <button
-        className="bg-lightBlue-500 active:bg-lightBlue-600 uppercase text-white font-bold hover:shadow-md shadow text-xs px-4 py-2 rounded outline-none focus:outline-none sm:mr-2 mb-1 ease-linear transition-all duration-150"
-        type="button"
+        <button
+          className="bg-lightBlue-500 active:bg-lightBlue-600 uppercase text-white font-bold hover:shadow-md shadow text-xs px-4 py-2 rounded outline-none focus:outline-none sm:mr-2 mb-1 ease-linear transition-all duration-150"
+          type="button"
         >
-        Approve
+          Approve
       </button>
-    </Link>
-        )
+      </Link>
+    )
   }
 
   if (status === "confirmed") {
-    return(
+    return (
       <Link to={`/admin/orders/assign/${id}`}>
-      <button
-        className="bg-lightBlue-500 active:bg-lightBlue-600 uppercase text-white font-bold hover:shadow-md shadow text-xs px-4 py-2 rounded outline-none focus:outline-none sm:mr-2 mb-1 ease-linear transition-all duration-150"
-        type="button"
+        <button
+          className="bg-lightBlue-500 active:bg-lightBlue-600 uppercase text-white font-bold hover:shadow-md shadow text-xs px-4 py-2 rounded outline-none focus:outline-none sm:mr-2 mb-1 ease-linear transition-all duration-150"
+          type="button"
         >
-        Assign
+          Assign
       </button>
-    </Link>
-        )
+      </Link>
+    )
   }
 
-    return(
-      <Link to={`/admin/orders/edit/${id}`}>
+  return (
+    <Link to={`/admin/orders/edit/${id}`}>
       <button
         className="bg-lightBlue-500 active:bg-lightBlue-600 uppercase text-white font-bold hover:shadow-md shadow text-xs px-4 py-2 rounded outline-none focus:outline-none sm:mr-2 mb-1 ease-linear transition-all duration-150"
         type="button"
-        >
+      >
         Edit
       </button>
     </Link>
-        )
+  )
 
 }
