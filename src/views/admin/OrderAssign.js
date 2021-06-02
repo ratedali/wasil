@@ -20,10 +20,6 @@ export default function OrderAssign() {
   const queryCustomer = useFirestore().doc(`users/${order.customerId}`);
   const { data: customer } = useFirestoreDocData(queryCustomer);
 
-
-  const dropoff =
-    order.dropLocation.latitude + ", " + order.dropLocation.longitude;
-
   return (
     <>
       <div className="relative flex flex-col min-w-0 break-words bg-white w-full mb-6 shadow-lg rounded">
@@ -59,7 +55,9 @@ export default function OrderAssign() {
 
             <div className="mb-2 text-blueGray-600">
               <i className="fas fa-map-marker-alt mr-2 text-lg text-blueGray-400"></i>
-              {dropoff}
+              {order.dropLocation != null
+                ? `${order.dropLocation.latitude}, ${order.dropLocation.longitude}`
+                : "N/A"}
             </div>
             <div className="mb-2 text-blueGray-600">
               Assign Driver:

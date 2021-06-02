@@ -1,16 +1,32 @@
 import classNames from "classnames";
-import React from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { useFirestore, useFirestoreDocData } from "reactfire";
 
 export default function OrderDetails() {
   const { id } = useParams();
+  const firestore = useFirestore();
   const querystring = `fuelOrders/${id}`;
-  const query = useFirestore().doc(querystring);
+  const query = firestore.doc(querystring);
   const { data: order } = useFirestoreDocData(query);
 
-  const queryCustomer = useFirestore().doc(`users/${order.customerId}`);
+  const queryCustomer = firestore.doc(`users/${order.customerId}`);
   const { data: customer } = useFirestoreDocData(queryCustomer);
+
+  const [loadingDriver, setLoadingDriver] = useState(false);
+  const [driver, setDriver] = useState();
+  useEffect(() => {
+    async function getDriverInfo() {
+      const result = await firestore.doc(`drivers/${order.driverId}`).get();
+      if (result.exists) {
+        setDriver(result.data);
+      }
+    }
+    if (order.driverId) {
+      setLoadingDriver(true);
+      getDriverInfo().finally(() => setLoadingDriver(false));
+    }
+  }, [firestore, order.driverId]);
 
   const statusLabels = new Map([
     ["unconfirmed", "Unconfirmed"],
@@ -83,9 +99,11 @@ export default function OrderDetails() {
             </div>
             <div className="mb-2 text-blueGray-600">
               <i className="fas fa-truck mr-2 text-lg text-blueGray-400"></i>
-              {/* <Link to={`/admin/drivers/${order.driverId}`}>
-                {driver.name == null ? "Not Set" : driver.name}
-              </Link> */}
+              <Link to={`/admin/drivers/${order.driverId}`}>
+                {loadingDriver
+                  ? "Loading..."
+                  : driver?.name ?? "Not Assigned"}
+              </Link>
             </div>
             <div className="mb-12 text-blueGray-600"></div>
           </div>
