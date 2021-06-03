@@ -15,23 +15,36 @@ export default function OrderApprove() {
   const queryCustomer = useFirestore().doc(`users/${order.customerId}`);
   const { data: customer } = useFirestoreDocData(queryCustomer);
 
+  function timeConverter(UNIX_timestamp){
+    var a = new Date(UNIX_timestamp * 1000);
+    var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    var year = a.getFullYear();
+    var month = months[a.getMonth()];
+    var date = a.getDate();
+    var hour = a.getHours();
+    var min = a.getMinutes();
+    var sec = a.getSeconds();
+    var time = date + ' ' + month + ' ' + year + ' ' + hour + ':' + min + ':' + sec ;
+    return time;
+  }
+
   return (
     <>
       <div className="relative flex flex-col min-w-0 break-words bg-white w-full mb-6 shadow-lg rounded">
         <div className="px-6">
           <div className="text-center mt-1">
             <h5 className="text-4xl font-semibold leading-normal mb-2 text-blueGray-700">
-              OrderId
+              Approve Order
             </h5>
             <div className="mb-2 text-blueGray-600">
               <i className="fas fa-dollar-sign mr-2 text-lg text-blueGray-400"></i>
-              Gas Price: {order.price}
+              Price: {order.price}
             </div>
 
 
             <div className="mb-2 text-blueGray-600">
               <i className="fas fa-calendar-alt mr-2 text-lg text-blueGray-400"></i>
-              Created At
+              Created At {timeConverter(order.createdAt.seconds)}
             </div>
             <div className="mb-2 text-blueGray-600">
               <i className="fas fa-gas-pump mr-2 text-lg text-blueGray-400"></i>
@@ -82,11 +95,13 @@ function EditPrice({ order }) {
   const initialState = order.deliveryPrice;
   const [delivery, setDelivery] = useState(initialState);
   const history = useHistory();
-  const [valid, setValid] = useState(!Number.isNaN(delivery));
-  const disabled = order.state !== "khartoum" && !delivery;
+  const [valid, setValid] = useState(Number.isNaN(delivery));
+  const disabled = order.state == "khartoum"// && !delivery;
+  console.log(" ")
 
   const onDeliveryChange = (e) => {
     setDelivery(e.target.value);
+
     if (Number.isNaN(delivery)) {
       setValid(false);
     } else {
@@ -101,6 +116,7 @@ function EditPrice({ order }) {
     });
     history.push(`/admin/orders/id/${id}`);
   };
+
 
   return (
     <>

@@ -17,9 +17,10 @@ export default function OrderDetails() {
   const [driver, setDriver] = useState();
   useEffect(() => {
     async function getDriverInfo() {
-      const result = await firestore.doc(`drivers/${order.driverId}`).get();
+      const result = await firestore.doc(`refillDrivers/${order.driverId}`).get();
+
       if (result.exists) {
-        setDriver(result.data);
+        setDriver(result.data());
       }
     }
     if (order.driverId) {
@@ -33,6 +34,20 @@ export default function OrderDetails() {
     ["in-progress", "In Progress"],
     ["finished", "Finished"],
   ]);
+ 
+  
+  function timeConverter(UNIX_timestamp){
+    var a = new Date(UNIX_timestamp * 1000);
+    var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    var year = a.getFullYear();
+    var month = months[a.getMonth()];
+    var date = a.getDate();
+    var hour = a.getHours();
+    var min = a.getMinutes();
+    var sec = a.getSeconds();
+    var time = date + ' ' + month + ' ' + year + ' ' + hour + ':' + min + ':' + sec ;
+    return time;
+  }
 
   return (
     <>
@@ -67,36 +82,43 @@ export default function OrderDetails() {
           </div>
           <div className="text-center mt-1">
             <h5 className="text-4xl font-semibold leading-normal mb-2 text-blueGray-700">
-              OrderId
+              Order Details
             </h5>
-            <div className="mb-2 text-blueGray-600">
-              <i className="fas fa-map-marker-alt mr-2 text-lg text-blueGray-400"></i>
-              {order.dropLocation != null
-                ? `${order.dropLocation.latitude}, ${order.dropLocation.longitude}`
-                : "N/A"}
-            </div>
+
             <div className="mb-2 text-blueGray-600">
               <i className="fas fa-dollar-sign mr-2 text-lg text-blueGray-400"></i>
-              {order.price}
+              Price: {order.price}
             </div>
+            
             <div className="mb-2 text-blueGray-600">
               <i className="fas fa-calendar-alt mr-2 text-lg text-blueGray-400"></i>
-              Created At
+              Created At {timeConverter(order.createdAt.seconds)}
             </div>
+            
             <div className="mb-2 text-blueGray-600">
               <i className="fas fa-gas-pump mr-2 text-lg text-blueGray-400"></i>
               {order.fuelType}
             </div>
+
             <div className="mb-2 text-blueGray-600">
               <i className="fas fa-tachometer-alt mr-2 text-lg text-blueGray-400"></i>
               {order.amount}L
             </div>
+
             <div className="mb-2 text-blueGray-600">
               <i className="fas fa-user mr-2 text-lg text-blueGray-400"></i>
               <Link to={`/admin/customers/${order.customerId}`}>
                 {customer.name}
               </Link>
             </div>
+            
+            <div className="mb-2 text-blueGray-600">
+              <i className="fas fa-map-marker-alt mr-2 text-lg text-blueGray-400"></i>
+              {order.dropLocation != null
+                ? `${order.dropLocation.latitude}, ${order.dropLocation.longitude}`
+                : "N/A"}
+            </div>
+
             <div className="mb-2 text-blueGray-600">
               <i className="fas fa-truck mr-2 text-lg text-blueGray-400"></i>
               <Link to={`/admin/drivers/${order.driverId}`}>
@@ -142,12 +164,12 @@ function EditButton({ status }) {
   }
 
   return (
-    <Link to={`/admin/orders/edit/${id}`}>
+    <Link to={`/admin/dashboard`}>
       <button
         className="bg-lightBlue-500 active:bg-lightBlue-600 uppercase text-white font-bold hover:shadow-md shadow text-xs px-4 py-2 rounded outline-none focus:outline-none sm:mr-2 mb-1 ease-linear transition-all duration-150"
         type="button"
       >
-        Edit
+        Go to Dashboard
       </button>
     </Link>
   )
