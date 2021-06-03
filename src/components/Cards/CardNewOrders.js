@@ -1,4 +1,5 @@
 import Card from "components/Cards/Card.js";
+import RejectDropdown from "components/Dropdowns/RejectDropdown.js";
 import LoadingBar from "components/Loading/LoadingBar.js";
 import Cell from "components/Table/Cell.js";
 import HeadingCell from "components/Table/HeadingCell.js";
@@ -85,8 +86,11 @@ const typeLocation = new Map([
 function Order({ doc }) {
   const firestore = useFirestore();
   const { data: order } = useFirestoreDocData(doc.ref);
-  const reject = async () => {
-    await firestore.doc(`fuelOrders/${doc.id}`).update("status", "rejected");
+  const reject = async (reason) => {
+    await firestore.doc(`fuelOrders/${doc.id}`).set({
+      "status": "rejected",
+      "rejectionReason": reason,
+    }, { merge: true });
   };
   return (
     <tr>
@@ -96,11 +100,7 @@ function Order({ doc }) {
       <Cell>{order.price}</Cell>
       <Cell>{order.deliveryPrice ?? '-'}</Cell>
       <Cell action={true}>
-        <button
-          onClick={reject}
-          className="mr-2 py-1 px-3 rounded text-red-600 uppercase hover:bg-gray-100 focus:outline-none active:bg-gray-200 transition">
-          Reject
-        </button>
+        <RejectDropdown onReasonSelection={reason => reject(reason)} />
         <Link role="button" to={`orders/approve/${doc.id}`}
           className="py-1 px-3 rounded border-2 text-green-600 border-green-600 uppercase hover:bg-green-100 focus:outline-none active:bg-green-200 transition">
           Approve

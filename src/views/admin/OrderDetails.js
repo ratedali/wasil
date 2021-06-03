@@ -1,5 +1,5 @@
 import classNames from "classnames";
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { useFirestore, useFirestoreDocData } from "reactfire";
 
@@ -121,11 +121,14 @@ export default function OrderDetails() {
 
             <div className="mb-2 text-blueGray-600">
               <i className="fas fa-truck mr-2 text-lg text-blueGray-400"></i>
-              <Link to={`/admin/drivers/${order.driverId}`}>
-                {loadingDriver
-                  ? "Loading..."
-                  : driver?.name ?? "Not Assigned"}
-              </Link>
+              {loadingDriver
+                ? "Loading..."
+                : (
+                  <Link to={`/admin/drivers/${order.driverId}`}>
+                    {driver?.name ?? "Not Assigned"}
+                  </Link>
+                )
+              }
             </div>
             <div className="mb-12 text-blueGray-600"></div>
           </div>

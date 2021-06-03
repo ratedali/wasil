@@ -1,0 +1,18 @@
+{
+    "out_of_stock": {
+        "short": "Out of Stock",
+        "message": "Sorry! We are all out of fuel at the moment."
+    },
+    "out_of_range": {
+        "short": "Out of Range",
+        "message": "Sadly the area you provided for delivery is out of our service range."
+    },
+    "out_of_business_hours": {
+        "short": "Outside office hours",
+        "message": "We are not available at this time, you can try again during our business hours."
+    },
+    "unspecified": {
+        "short": "Unspecified Reason",
+        "message": "We are not able to fulfill your request at this time."
+    }
+}
