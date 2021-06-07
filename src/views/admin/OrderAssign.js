@@ -17,19 +17,19 @@ export default function OrderAssign() {
   const query = useFirestore().doc(querystring);
   const { data: order } = useFirestoreDocData(query);
 
-  const queryCustomer = useFirestore().doc(`users/${order.customerId}`);
+  const queryCustomer = useFirestore().doc(`customers/${order.customerId}`);
   const { data: customer } = useFirestoreDocData(queryCustomer);
 
-  function timeConverter(UNIX_timestamp){
+  function timeConverter(UNIX_timestamp) {
     var a = new Date(UNIX_timestamp * 1000);
-    var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
     var year = a.getFullYear();
     var month = months[a.getMonth()];
     var date = a.getDate();
     var hour = a.getHours();
     var min = a.getMinutes();
     var sec = a.getSeconds();
-    var time = date + ' ' + month + ' ' + year + ' ' + hour + ':' + min + ':' + sec ;
+    var time = date + ' ' + month + ' ' + year + ' ' + hour + ':' + min + ':' + sec;
     return time;
   }
 
@@ -50,7 +50,7 @@ export default function OrderAssign() {
               <i className="fas fa-calendar-alt mr-2 text-lg text-blueGray-400"></i>
               Created At {timeConverter(order.createdAt.seconds)}
             </div>
-            
+
             <div className="mb-2 text-blueGray-600">
               <i className="fas fa-gas-pump mr-2 text-lg text-blueGray-400"></i>
               {order.fuelType}
@@ -64,7 +64,7 @@ export default function OrderAssign() {
             <div className="mb-2 text-blueGray-600">
               <i className="fas fa-user mr-2 text-lg text-blueGray-400"></i>
               <Link to={`/admin/customers/${order.customerId}`}>
-                {customer.name}
+                {customer.username}
               </Link>
             </div>
 

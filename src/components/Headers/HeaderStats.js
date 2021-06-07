@@ -110,7 +110,7 @@ function NewUsersCard({ today }) {
   return (
     <FirestoreStatCard
       name="New Users"
-      collection="users"
+      collection="customers"
       field="joinedAt"
       start={lastWeek}
       before={weekBeforeLast}

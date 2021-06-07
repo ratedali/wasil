@@ -52,7 +52,7 @@ function LoadingCard() {
 }
 
 function CustomersCard() {
-  const query = useFirestore().collection("users").orderBy("joinedAt", "desc");
+  const query = useFirestore().collection("customers").orderBy("joinedAt", "desc");
   const { data: collection } = useFirestoreCollection(query);
   const [page, setPage] = useState(1);
   const numRows = 10;
@@ -94,7 +94,7 @@ function Customer({ doc }) {
   return (
     <tr key={doc.id}>
       <RowHeadingCell avatar={require("assets/img/bootstrap.jpg").default}>
-        <Link to={`customers/id/${doc.id}`}>{customer.name}</Link>
+        <Link to={`customers/id/${doc.id}`}>{customer.username}</Link>
       </RowHeadingCell>
       <Cell>{customer.phone}</Cell>
       <Cell>

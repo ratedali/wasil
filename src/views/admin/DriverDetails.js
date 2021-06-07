@@ -138,7 +138,7 @@ function OrderRow({ order }) {
   const [customer, setCustomer] = useState();
   useEffect(() => {
     async function fetchCustomer() {
-      const doc = await firestore.doc(`users/${order.customerId}`).get();
+      const doc = await firestore.doc(`customers/${order.customerId}`).get();
       setCustomer(doc.data());
     }
     setLoading(true);
@@ -151,7 +151,7 @@ function OrderRow({ order }) {
           ? '...'
           : (
             <Link to={`/admin/customers/${order.customerId}`}>
-              {customer.name}
+              {customer.username}
             </Link>
           )
         }

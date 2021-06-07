@@ -27,7 +27,7 @@ exports.orderStatusNotification = functions.firestore.document("/fuelOrders/{ord
         const status = after.get("status");
         const beforeStatus = before.get("status");
         const customer = await admin.firestore()
-            .doc(`users/${after.get("customerId")}`)
+            .doc(`customers/${after.get("customerId")}`)
             .get();
         if (beforeStatus === "new" && status === "unconfirmed") {
             functions.logger.log(`Order #${orderId} approved!`);

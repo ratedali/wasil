@@ -135,14 +135,14 @@ function Order({ doc }) {
   const firestore = useFirestore();
   const { data: order } = useFirestoreDocData(doc.ref);
   const { data: customer } = useFirestoreDocData(
-    firestore.doc(`users/${order.customerId}`)
+    firestore.doc(`customers/${order.customerId}`)
   );
   const [loadingDriver, setLoadingDriver] = useState(!!order.driverId);
   const [driver, setDriver] = useState();
   useEffect(() => {
     async function fetchDriver() {
-      const { data: driver } = await firestore.doc(`refillDrivers/${order.driverId}`).get();
-      setDriver(driver);
+      const doc = await firestore.doc(`refillDrivers/${order.driverId}`).get();
+      setDriver(doc.data());
     }
     if (order.driverId) {
       setLoadingDriver(true);
@@ -152,7 +152,7 @@ function Order({ doc }) {
   return (
     <tr>
       <Cell>
-        <Link to={`customers/id/${order.customerId}`}>{customer?.name}</Link>
+        <Link to={`customers/id/${order.customerId}`}>{customer?.username}</Link>
       </Cell>
       <Cell>{order.amount}L</Cell>
       <Cell>{typeLabels.get(order.fuelType)}</Cell>
@@ -161,13 +161,14 @@ function Order({ doc }) {
       <Cell>
         {loadingDriver
           ? "..."
-          : order.driverId ? (
-            <Link to={`drivers/id/${order.driverId}`}>
-              {order.driverId ? driver.name : null}
-            </Link>
-          ) : (
-            "-"
-          )}
+          : driver
+            ? (
+              <Link to={`drivers/id/${order.driverId}`}>
+                {order.driverId ? driver.name : null}
+              </Link>
+            )
+            : "-"
+        }
       </Cell>
 
       <Cell>

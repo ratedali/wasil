@@ -19,7 +19,7 @@ export default function OrderDetails() {
   const query = firestore.doc(querystring);
   const { data: order } = useFirestoreDocData(query);
 
-  const queryCustomer = firestore.doc(`users/${order.customerId}`);
+  const queryCustomer = firestore.doc(`customers/${order.customerId}`);
   const { data: customer } = useFirestoreDocData(queryCustomer);
 
   const [loadingDriver, setLoadingDriver] = useState(false);
@@ -113,7 +113,7 @@ export default function OrderDetails() {
             <div className="mb-2 text-blueGray-600">
               <i className="fas fa-user mr-2 text-lg text-blueGray-400"></i>
               <Link to={`/admin/customers/${order.customerId}`}>
-                {customer.name}
+                {customer.username}
               </Link>
             </div>
 

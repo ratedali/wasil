@@ -25,7 +25,7 @@ const statusLabels = new Map([
 
 export default function CustomerDetails() {
   const { id } = useParams();
-  const querystring = `users/${id}`;
+  const querystring = `customers/${id}`;
   const query = useFirestore().doc(querystring);
   const { data: customer } = useFirestoreDocData(query);
   const formatDate = format("dd/MM/yyyy");
@@ -81,7 +81,7 @@ export default function CustomerDetails() {
           </div>
           <div className="text-center ">
             <h3 className="text-4xl font-semibold leading-normal mb-2 text-blueGray-700">
-              {customer.name}
+              {customer.username}
             </h3>
             <div className="text-sm leading-normal  mb-2 text-blueGray-400 font-bold uppercase">
               <i className="fas fa-map-marker-alt mr-2 text-lg text-blueGray-400"></i>{" "}
