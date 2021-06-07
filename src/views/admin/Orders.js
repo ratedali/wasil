@@ -18,6 +18,7 @@ const headings = [
   "Amount",
   "Fuel",
   "Fee",
+  "Payment",
   "Driver",
   "Time",
   "Status",
@@ -156,6 +157,7 @@ function Order({ doc }) {
       <Cell>{order.amount}L</Cell>
       <Cell>{typeLabels.get(order.fuelType)}</Cell>
       <Cell>{order.price > 0 ? `${order.price} SDG` : "-"}</Cell>
+      <Cell>{order.paymentMethod}</Cell>
       <Cell>
         {loadingDriver
           ? "..."

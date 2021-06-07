@@ -3,6 +3,15 @@ import React, { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { useFirestore, useFirestoreDocData } from "reactfire";
 
+const statusLabels = new Map([
+  ["new", "New"],
+  ["unconfirmed", "Unconfirmed"],
+  ["confirmed", "Confirmed"],
+  ["rejected", "Rejected"],
+  ["in-progress", "In Progress"],
+  ["finished", "Finished"],
+]);
+
 export default function OrderDetails() {
   const { id } = useParams();
   const firestore = useFirestore();
@@ -28,13 +37,6 @@ export default function OrderDetails() {
       getDriverInfo().finally(() => setLoadingDriver(false));
     }
   }, [firestore, order.driverId]);
-
-  const statusLabels = new Map([
-    ["unconfirmed", "Unconfirmed"],
-    ["in-progress", "In Progress"],
-    ["finished", "Finished"],
-  ]);
-
 
   function timeConverter(UNIX_timestamp) {
     var a = new Date(UNIX_timestamp * 1000);
@@ -67,14 +69,17 @@ export default function OrderDetails() {
                   <span className="text-xl font-bold block uppercase tracking-wide text-blueGray-600">
                     <i
                       className={classNames("fas fa-circle mr-2", {
-                        "text-gray-300": order.status === "new",
-                        "text-yellow-300 ": order.status === "in-progress",
-                        "text-emerald-300 ": order.status === "finished",
+                        "text-lightBlue-500": order.status === "new",
+                        "text-gray-500": order.status === "unconfirmed",
+                        "text-teal-500": order.status === "confirmed",
+                        "text-red-500": order.status === "rejected",
+                        "text-yellow-500 ": order.status === "in-progress",
+                        "text-green-500 ": order.status === "finished",
                       })}
-                    ></i>
-                  </span>
-                  <span className="text-sm text-blueGray-400">
-                    {statusLabels.get(order.status)}
+                    ></i>{" "}
+                    <span className="text-sm text-blueGray-400">
+                      {statusLabels.get(order.status)}
+                    </span>
                   </span>
                 </div>
               </div>
@@ -87,7 +92,7 @@ export default function OrderDetails() {
 
             <div className="mb-2 text-blueGray-600">
               <i className="fas fa-dollar-sign mr-2 text-lg text-blueGray-400"></i>
-              Price: {order.price}
+              Price: {order.price} ({order.paymentMethod})
             </div>
 
             <div className="mb-2 text-blueGray-600">

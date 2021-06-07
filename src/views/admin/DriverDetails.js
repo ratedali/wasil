@@ -11,6 +11,15 @@ import {
   useFirestoreDocData,
 } from "reactfire";
 
+const statusLabels = new Map([
+  ["new", "New"],
+  ["unconfirmed", "Unconfirmed"],
+  ["confirmed", "Confirmed"],
+  ["rejected", "Rejected"],
+  ["in-progress", "In Progress"],
+  ["finished", "Finished"],
+]);
+
 export default function DriverDetails() {
   const { id } = useParams();
   const querystring = `refillDrivers/${id}`;
@@ -33,7 +42,7 @@ export default function DriverDetails() {
 
   return (
     <>
-      <div className="relative flex flex-col min-w-0 break-words bg-white px-6 w-full mb-6 shadow-lg rounded">
+      <div className="relative flex flex-col min-w-0 break-words bg-white px-6 w-full mb-12 shadow-lg rounded">
         <div className="flex flex-wrap justify-center">
           <div className="w-full lg:w-5/12 px-4 lg:order-2 lg:text-right lg:self-center">
             <div className="py-6 px-3 mt-32 sm:mt-0">
@@ -90,29 +99,34 @@ export default function DriverDetails() {
             Latest Order 10 Liters 5 days ago
           </div>
         </div>
-        <div className="mt-10 py-10 border-t border-blueGray-200 text-center">
-          <>
-            <div className="flex flex-wrap mt-4">
-              <div className="w-full mb-12 px-4">
-                <table>
-                  <thead>
-                    <tr>
-                      <HeadingCell>Customer</HeadingCell>
-                      <HeadingCell>Amount</HeadingCell>
-                      <HeadingCell>Fuel</HeadingCell>
-                      <HeadingCell>Fee</HeadingCell>
-                      <HeadingCell>Status</HeadingCell>
-                      <HeadingCell>Driver</HeadingCell>
-                    </tr>
-                  </thead>
-                  <Suspense fallback={<LoadingBar />}>
-                    <DriverDiliveriRow orders={driverDeliveries} />
-                  </Suspense>
-                </table>
+        {!driverDeliveries?.length
+          ? null
+          : (
+            <>
+              <div className="mt-10 py-10 border-t border-blueGray-200 text-center">
+                <div className="flex flex-wrap mt-4">
+                  <div className="w-full mb-12 px-4">
+                    <table>
+                      <thead>
+                        <tr>
+                          <HeadingCell>Customer</HeadingCell>
+                          <HeadingCell>Amount</HeadingCell>
+                          <HeadingCell>Fuel</HeadingCell>
+                          <HeadingCell>Fee</HeadingCell>
+                          <HeadingCell>Payment</HeadingCell>
+                          <HeadingCell>Status</HeadingCell>
+                          <HeadingCell>Driver</HeadingCell>
+                        </tr>
+                      </thead>
+                      <Suspense fallback={<LoadingBar />}>
+                        <DriverDiliveriRow orders={driverDeliveries} />
+                      </Suspense>
+                    </table>
+                  </div>
+                </div>
               </div>
-            </div>
-          </>
-        </div>
+            </>
+          )}
       </div>
     </>
   );
@@ -122,11 +136,6 @@ function DriverDiliveriRow({ orders }) {
   const typeLabels = new Map([
     ["benzene", "Benzene"],
     ["gasoline", "Gasoline"],
-  ]);
-  const statusLabels = new Map([
-    ["unconfirmed", "Unconfirmed"],
-    ["in-progress", "In Progress"],
-    ["finished", "Finished"],
   ]);
   return (
     <tbody>
@@ -140,12 +149,16 @@ function DriverDiliveriRow({ orders }) {
           <Cell>{order.amount}L</Cell>
           <Cell>{typeLabels.get(order.fuelType)}</Cell>
           <Cell>{order.price > 0 ? `${order.price} SDG` : "-"}</Cell>
+          <Cell>{order.paymentMethod}</Cell>
           <Cell>
             <i
               className={classNames("fas fa-circle mr-2", {
-                "text-gray-300": order.status === "new",
-                "text-yellow-300 ": order.status === "in-progress",
-                "text-emerald-300 ": order.status === "finished",
+                "text-lightBlue-500": order.status === "new",
+                "text-gray-500": order.status === "unconfirmed",
+                "text-teal-500": order.status === "confirmed",
+                "text-red-500": order.status === "rejected",
+                "text-yellow-500 ": order.status === "in-progress",
+                "text-green-500 ": order.status === "finished",
               })}
             ></i>{" "}
             {statusLabels.get(order.status)}

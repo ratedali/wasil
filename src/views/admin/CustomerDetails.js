@@ -11,6 +11,15 @@ import {
   useFirestoreDocData,
 } from "reactfire";
 
+const statusLabels = new Map([
+  ["new", "New"],
+  ["unconfirmed", "Unconfirmed"],
+  ["confirmed", "Confirmed"],
+  ["rejected", "Rejected"],
+  ["in-progress", "In Progress"],
+  ["finished", "Finished"],
+]);
+
 export default function CustomerDetails() {
   const { id } = useParams();
   const querystring = `users/${id}`;
@@ -102,6 +111,7 @@ export default function CustomerDetails() {
                         <HeadingCell>Amount</HeadingCell>
                         <HeadingCell>Fuel</HeadingCell>
                         <HeadingCell>Fee</HeadingCell>
+                        <HeadingCell>Payment</HeadingCell>
                         <HeadingCell>Status</HeadingCell>
                         <HeadingCell>Driver</HeadingCell>
                       </tr>
@@ -125,11 +135,6 @@ function CustomerOrdersRow({ orders }) {
     ["benzene", "Benzene"],
     ["gasoline", "Gasoline"],
   ]);
-  const statusLabels = new Map([
-    ["unconfirmed", "Unconfirmed"],
-    ["in-progress", "In Progress"],
-    ["finished", "Finished"],
-  ]);
   return (
     <tbody>
       {orders.map((order) => (
@@ -142,12 +147,16 @@ function CustomerOrdersRow({ orders }) {
           <Cell>{order.amount}L</Cell>
           <Cell>{typeLabels.get(order.fuelType)}</Cell>
           <Cell>{order.price > 0 ? `${order.price} SDG` : "-"}</Cell>
+          <Cell>{order.paymentMethod}</Cell>
           <Cell>
             <i
               className={classNames("fas fa-circle mr-2", {
-                "text-gray-300": order.status === "new",
-                "text-yellow-300 ": order.status === "in-progress",
-                "text-emerald-300 ": order.status === "finished",
+                "text-lightBlue-500": order.status === "new",
+                "text-gray-500": order.status === "unconfirmed",
+                "text-teal-500": order.status === "confirmed",
+                "text-red-500": order.status === "rejected",
+                "text-yellow-500 ": order.status === "in-progress",
+                "text-green-500 ": order.status === "finished",
               })}
             ></i>{" "}
             {statusLabels.get(order.status)}
