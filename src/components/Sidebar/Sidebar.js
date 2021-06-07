@@ -45,11 +45,6 @@ export default function Sidebar() {
     },
     ...(admin ? adminLinks : []),
     {
-      name: 'Maps',
-      path: '/admin/maps',
-      icon: 'fa-map-marked',
-    },
-    {
       name: 'Settings',
       path: '/admin/settings',
       icon: 'fa-tools',
