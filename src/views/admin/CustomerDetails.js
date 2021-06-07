@@ -1,9 +1,8 @@
 import classNames from "classnames";
-import LoadingBar from "components/Loading/LoadingBar.js";
 import Cell from "components/Table/Cell.js";
 import HeadingCell from "components/Table/HeadingCell.js";
 import { format } from "date-fns/fp";
-import React, { Suspense } from "react";
+import React, { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import {
   useFirestore,
@@ -11,6 +10,10 @@ import {
   useFirestoreDocData,
 } from "reactfire";
 
+const typeLabels = new Map([
+  ["benzene", "Benzene"],
+  ["gasoline", "Gasoline"],
+]);
 const statusLabels = new Map([
   ["new", "New"],
   ["unconfirmed", "Unconfirmed"],
@@ -107,7 +110,6 @@ export default function CustomerDetails() {
                   <table>
                     <thead>
                       <tr>
-                        <HeadingCell>Customer</HeadingCell>
                         <HeadingCell>Amount</HeadingCell>
                         <HeadingCell>Fuel</HeadingCell>
                         <HeadingCell>Fee</HeadingCell>
@@ -116,9 +118,9 @@ export default function CustomerDetails() {
                         <HeadingCell>Driver</HeadingCell>
                       </tr>
                     </thead>
-                    <Suspense fallback={<LoadingBar />}>
-                      <CustomerOrdersRow orders={customerOrders} />
-                    </Suspense>
+                    <tbody>
+                      {customerOrders.map((order) => <OrderRow order={order} />)}
+                    </tbody>
                   </table>
                 </div>
               </div>
@@ -130,48 +132,52 @@ export default function CustomerDetails() {
   );
 }
 
-function CustomerOrdersRow({ orders }) {
-  const typeLabels = new Map([
-    ["benzene", "Benzene"],
-    ["gasoline", "Gasoline"],
-  ]);
+function OrderRow({ order }) {
+  const firestore = useFirestore();
+  const [loading, setLoading] = useState(!!order.driverId);
+  const [driver, setDriver] = useState();
+  useEffect(() => {
+    async function fetchDriver() {
+      const doc = await firestore.doc(`refillDrivers/${order.driverId}`).get();
+      setDriver(doc.data());
+    }
+    if (order.driverId) {
+      setLoading(true);
+      fetchDriver().finally(() => setLoading(false));
+    }
+  }, [firestore, order]);
   return (
-    <tbody>
-      {orders.map((order) => (
-        <tr>
-          <Cell>
-            <Link to={`/admin/customers/${order.customerId}`}>
-              {order.customerId}
-            </Link>
-          </Cell>
-          <Cell>{order.amount}L</Cell>
-          <Cell>{typeLabels.get(order.fuelType)}</Cell>
-          <Cell>{order.price > 0 ? `${order.price} SDG` : "-"}</Cell>
-          <Cell>{order.paymentMethod}</Cell>
-          <Cell>
-            <i
-              className={classNames("fas fa-circle mr-2", {
-                "text-lightBlue-500": order.status === "new",
-                "text-gray-500": order.status === "unconfirmed",
-                "text-teal-500": order.status === "confirmed",
-                "text-red-500": order.status === "rejected",
-                "text-yellow-500 ": order.status === "in-progress",
-                "text-green-500 ": order.status === "finished",
-              })}
-            ></i>{" "}
-            {statusLabels.get(order.status)}
-          </Cell>
-          <Cell>
-            {order.driverId ? (
+    <tr>
+      <Cell>{order.amount}L</Cell>
+      <Cell>{typeLabels.get(order.fuelType)}</Cell>
+      <Cell>{order.price > 0 ? `${order.price} SDG` : "-"}</Cell>
+      <Cell>{order.paymentMethod}</Cell>
+      <Cell>
+        <i
+          className={classNames("fas fa-circle mr-2", {
+            "text-lightBlue-500": order.status === "new",
+            "text-gray-500": order.status === "unconfirmed",
+            "text-teal-500": order.status === "confirmed",
+            "text-red-500": order.status === "rejected",
+            "text-yellow-500 ": order.status === "in-progress",
+            "text-green-500 ": order.status === "finished",
+          })}
+        ></i>{" "}
+        {statusLabels.get(order.status)}
+      </Cell>
+      <Cell>
+        {loading
+          ? '...'
+          : order.driverId
+            ? (
               <Link to={`/admin/drivers/${order.driverId}`}>
-                {order.driverId}
+                {driver.name}
               </Link>
-            ) : (
-              "-"
-            )}
-          </Cell>
-        </tr>
-      ))}
-    </tbody>
+            )
+            :
+            "-"
+        }
+      </Cell>
+    </tr>
   );
 }

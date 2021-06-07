@@ -1,9 +1,8 @@
 import classNames from "classnames";
-import LoadingBar from "components/Loading/LoadingBar.js";
 import Cell from "components/Table/Cell.js";
 import HeadingCell from "components/Table/HeadingCell.js";
 import { format } from "date-fns/fp";
-import React, { Suspense } from "react";
+import React, { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import {
   useFirestore,
@@ -11,6 +10,10 @@ import {
   useFirestoreDocData,
 } from "reactfire";
 
+const typeLabels = new Map([
+  ["benzene", "Benzene"],
+  ["gasoline", "Gasoline"],
+]);
 const statusLabels = new Map([
   ["new", "New"],
   ["unconfirmed", "Unconfirmed"],
@@ -42,7 +45,7 @@ export default function DriverDetails() {
 
   return (
     <>
-      <div className="relative flex flex-col min-w-0 break-words bg-white px-6 w-full mb-12 shadow-lg rounded">
+      <div className="relative flex flex-col min-w-0 break-words bg-white px-8 pb-8 w-full shadow-lg rounded">
         <div className="flex flex-wrap justify-center">
           <div className="w-full lg:w-5/12 px-4 lg:order-2 lg:text-right lg:self-center">
             <div className="py-6 px-3 mt-32 sm:mt-0">
@@ -115,12 +118,9 @@ export default function DriverDetails() {
                           <HeadingCell>Fee</HeadingCell>
                           <HeadingCell>Payment</HeadingCell>
                           <HeadingCell>Status</HeadingCell>
-                          <HeadingCell>Driver</HeadingCell>
                         </tr>
                       </thead>
-                      <Suspense fallback={<LoadingBar />}>
-                        <DriverDiliveriRow orders={driverDeliveries} />
-                      </Suspense>
+                      {driverDeliveries.map(order => <OrderRow order={order} />)}
                     </table>
                   </div>
                 </div>
@@ -132,48 +132,47 @@ export default function DriverDetails() {
   );
 }
 
-function DriverDiliveriRow({ orders }) {
-  const typeLabels = new Map([
-    ["benzene", "Benzene"],
-    ["gasoline", "Gasoline"],
-  ]);
+function OrderRow({ order }) {
+  const firestore = useFirestore();
+  const [loading, setLoading] = useState(true);
+  const [customer, setCustomer] = useState();
+  useEffect(() => {
+    async function fetchCustomer() {
+      const doc = await firestore.doc(`users/${order.customerId}`).get();
+      setCustomer(doc.data());
+    }
+    setLoading(true);
+    fetchCustomer().finally(() => setLoading(false));
+  }, [firestore, order]);
   return (
-    <tbody>
-      {orders.map((order) => (
-        <tr>
-          <Cell>
+    <tr>
+      <Cell>
+        {loading
+          ? '...'
+          : (
             <Link to={`/admin/customers/${order.customerId}`}>
-              {order.customerName}
+              {customer.name}
             </Link>
-          </Cell>
-          <Cell>{order.amount}L</Cell>
-          <Cell>{typeLabels.get(order.fuelType)}</Cell>
-          <Cell>{order.price > 0 ? `${order.price} SDG` : "-"}</Cell>
-          <Cell>{order.paymentMethod}</Cell>
-          <Cell>
-            <i
-              className={classNames("fas fa-circle mr-2", {
-                "text-lightBlue-500": order.status === "new",
-                "text-gray-500": order.status === "unconfirmed",
-                "text-teal-500": order.status === "confirmed",
-                "text-red-500": order.status === "rejected",
-                "text-yellow-500 ": order.status === "in-progress",
-                "text-green-500 ": order.status === "finished",
-              })}
-            ></i>{" "}
-            {statusLabels.get(order.status)}
-          </Cell>
-          <Cell>
-            {order.driverId ? (
-              <Link to={`/admin/drivers/${order.driverId}`}>
-                {order.driverId}
-              </Link>
-            ) : (
-              "-"
-            )}
-          </Cell>
-        </tr>
-      ))}
-    </tbody>
+          )
+        }
+      </Cell>
+      <Cell>{order.amount}L</Cell>
+      <Cell>{typeLabels.get(order.fuelType)}</Cell>
+      <Cell>{order.price > 0 ? `${order.price} SDG` : "-"}</Cell>
+      <Cell>{order.paymentMethod}</Cell>
+      <Cell>
+        <i
+          className={classNames("fas fa-circle mr-2", {
+            "text-lightBlue-500": order.status === "new",
+            "text-gray-500": order.status === "unconfirmed",
+            "text-teal-500": order.status === "confirmed",
+            "text-red-500": order.status === "rejected",
+            "text-yellow-500 ": order.status === "in-progress",
+            "text-green-500 ": order.status === "finished",
+          })}
+        ></i>{" "}
+        {statusLabels.get(order.status)}
+      </Cell>
+    </tr>
   );
 }
