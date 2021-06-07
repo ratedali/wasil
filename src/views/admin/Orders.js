@@ -1,6 +1,5 @@
 import classNames from "classnames";
 import Card from "components/Cards/Card.js";
-import TableDropdown from "components/Dropdowns/TableDropdown.js";
 import LoadingBar from "components/Loading/LoadingBar.js";
 import Cell from "components/Table/Cell.js";
 import HeadingCell from "components/Table/HeadingCell.js";
@@ -191,9 +190,6 @@ function Order({ doc }) {
           ></i>{" "}
           {statusLabels.get(order.status)}
         </Link>
-      </Cell>
-      <Cell action={true}>
-        <TableDropdown />
       </Cell>
     </tr>
   );

@@ -1,6 +1,5 @@
 import classNames from "classnames";
 import Card from "components/Cards/Card.js";
-import TableDropdown from "components/Dropdowns/TableDropdown.js";
 import LoadingBar from "components/Loading/LoadingBar.js";
 import Cell from "components/Table/Cell.js";
 import HeadingCell from "components/Table/HeadingCell.js";
@@ -22,7 +21,6 @@ const headings = [
   "Gasoline",
   "Benzene",
   "Joined At",
-  "Actions",
 ];
 export default function Drivers() {
   return (
@@ -132,9 +130,6 @@ function Driver({ doc }) {
       <Cell>595/1000 Liters</Cell>
       <Cell>
         {driver.joinedAt ? formatDate(driver.joinedAt.toDate()) : "-"}
-      </Cell>
-      <Cell action={true}>
-        <TableDropdown />
       </Cell>
     </tr>
   );

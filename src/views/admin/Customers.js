@@ -1,5 +1,4 @@
 import Card from "components/Cards/Card.js";
-import TableDropdown from "components/Dropdowns/TableDropdown.js";
 import LoadingBar from "components/Loading/LoadingBar.js";
 import Cell from "components/Table/Cell.js";
 import HeadingCell from "components/Table/HeadingCell.js";
@@ -15,7 +14,7 @@ import {
   useFirestoreDocData,
 } from "reactfire";
 
-const headings = ["Customer", "Phone", "Joined At", "Last Login", "Actions"];
+const headings = ["Customer", "Phone", "Joined At", "Last Login"];
 
 export default function Customers() {
   return (
@@ -103,9 +102,6 @@ function Customer({ doc }) {
       </Cell>
       <Cell>
         {customer.lastLogin ? formatDate(customer.lastLogin.toDate()) : null}
-      </Cell>
-      <Cell action={true}>
-        <TableDropdown />
       </Cell>
     </tr>
   );

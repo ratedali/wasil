@@ -1,5 +1,4 @@
 import Card from "components/Cards/Card.js";
-import TableDropdown from "components/Dropdowns/TableDropdown.js";
 import LoadingBar from "components/Loading/LoadingBar.js";
 import Cell from "components/Table/Cell.js";
 import HeadingCell from "components/Table/HeadingCell.js";
@@ -17,7 +16,6 @@ const headings = [
   "Role",
   "Created At",
   "Last Login",
-  "Actions"
 ];
 
 export default function Staff() {
@@ -102,9 +100,6 @@ function StaffMember({ doc }) {
       <Cell>{staff.admin ? "Administrator" : "Regular"}</Cell>
       <Cell>{staff.createdAt ? formatDate(staff.createdAt.toDate()) : '-'}</Cell>
       <Cell>{staff.lastLogin ? formatDate(staff.lastLogin.toDate()) : '-'}</Cell>
-      <Cell action={true}>
-        <TableDropdown />
-      </Cell>
     </tr>
   );
 }
