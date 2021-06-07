@@ -6,7 +6,7 @@ import Cell from "components/Table/Cell.js";
 import HeadingCell from "components/Table/HeadingCell.js";
 import Table from "components/Table/Table.js";
 import TablePagination from "components/Table/TablePagination.js";
-import React, { Suspense, useState } from "react";
+import React, { Suspense, useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import {
   useFirestore,
@@ -22,7 +22,6 @@ const headings = [
   "Driver",
   "Time",
   "Status",
-  "Actions",
 ];
 
 export default function Orders() {
@@ -64,16 +63,16 @@ function LoadingCard() {
   );
 }
 
-function timeConverter(UNIX_timestamp){
+function timeConverter(UNIX_timestamp) {
   var a = new Date(UNIX_timestamp * 1000);
-  var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
   var year = a.getFullYear();
   var month = months[a.getMonth()];
   var date = a.getDate();
   var hour = a.getHours();
   var min = a.getMinutes();
   var sec = a.getSeconds();
-  var time = date + ' ' + month + ' ' + year + ' ' + hour + ':' + min + ':' + sec ;
+  var time = date + ' ' + month + ' ' + year + ' ' + hour + ':' + min + ':' + sec;
   return time;
 }
 
@@ -138,9 +137,18 @@ function Order({ doc }) {
   const { data: customer } = useFirestoreDocData(
     firestore.doc(`users/${order.customerId}`)
   );
-  const { data: driver } = useFirestoreDocData(
-    firestore.doc(`refillDrivers/${order.driverId}`)
-  );
+  const [loadingDriver, setLoadingDriver] = useState(!!order.driverId);
+  const [driver, setDriver] = useState();
+  useEffect(() => {
+    async function fetchDriver() {
+      const { data: driver } = await firestore.doc(`refillDrivers/${order.driverId}`).get();
+      setDriver(driver);
+    }
+    if (order.driverId) {
+      setLoadingDriver(true);
+      fetchDriver().finally(() => setLoadingDriver(false));
+    }
+  }, [firestore, order]);
   return (
     <tr>
       <Cell>
@@ -150,23 +158,25 @@ function Order({ doc }) {
       <Cell>{typeLabels.get(order.fuelType)}</Cell>
       <Cell>{order.price > 0 ? `${order.price} SDG` : "-"}</Cell>
       <Cell>
-        {order.driverId ? (
-          <Link to={`drivers/id/${order.driverId}`}>
-            {order.driverId ? driver.name : null}
-          </Link>
-        ) : (
-          "-"
-        )}
+        {loadingDriver
+          ? "..."
+          : order.driverId ? (
+            <Link to={`drivers/id/${order.driverId}`}>
+              {order.driverId ? driver.name : null}
+            </Link>
+          ) : (
+            "-"
+          )}
       </Cell>
 
       <Cell>
-        {order.orderType === "instant"? (
-            "Instant"
+        {order.orderType === "instant" ? (
+          "Instant"
         ) : (
           timeConverter(order.scheduledArrival.seconds)
         )}
       </Cell>
-      
+
       <Cell>
         <Link to={`orders/id/${doc.id}`}>
           <i

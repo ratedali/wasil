@@ -34,18 +34,18 @@ export default function OrderDetails() {
     ["in-progress", "In Progress"],
     ["finished", "Finished"],
   ]);
- 
-  
-  function timeConverter(UNIX_timestamp){
+
+
+  function timeConverter(UNIX_timestamp) {
     var a = new Date(UNIX_timestamp * 1000);
-    var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
     var year = a.getFullYear();
     var month = months[a.getMonth()];
     var date = a.getDate();
     var hour = a.getHours();
     var min = a.getMinutes();
     var sec = a.getSeconds();
-    var time = date + ' ' + month + ' ' + year + ' ' + hour + ':' + min + ':' + sec ;
+    var time = date + ' ' + month + ' ' + year + ' ' + hour + ':' + min + ':' + sec;
     return time;
   }
 
@@ -89,12 +89,12 @@ export default function OrderDetails() {
               <i className="fas fa-dollar-sign mr-2 text-lg text-blueGray-400"></i>
               Price: {order.price}
             </div>
-            
+
             <div className="mb-2 text-blueGray-600">
               <i className="fas fa-calendar-alt mr-2 text-lg text-blueGray-400"></i>
               Created At {timeConverter(order.createdAt.seconds)}
             </div>
-            
+
             <div className="mb-2 text-blueGray-600">
               <i className="fas fa-gas-pump mr-2 text-lg text-blueGray-400"></i>
               {order.fuelType}
@@ -111,7 +111,7 @@ export default function OrderDetails() {
                 {customer.name}
               </Link>
             </div>
-            
+
             <div className="mb-2 text-blueGray-600">
               <i className="fas fa-map-marker-alt mr-2 text-lg text-blueGray-400"></i>
               {order.dropLocation != null
@@ -119,17 +119,22 @@ export default function OrderDetails() {
                 : "N/A"}
             </div>
 
-            <div className="mb-2 text-blueGray-600">
-              <i className="fas fa-truck mr-2 text-lg text-blueGray-400"></i>
-              {loadingDriver
-                ? "Loading..."
-                : (
-                  <Link to={`/admin/drivers/${order.driverId}`}>
-                    {driver?.name ?? "Not Assigned"}
-                  </Link>
-                )
-              }
-            </div>
+            {order?.driverId
+              ? (
+                <div className="mb-2 text-blueGray-600">
+                  <i className="fas fa-truck mr-2 text-lg text-blueGray-400"></i>
+                  {loadingDriver
+                    ? "Loading..."
+                    : (
+                      <Link to={`/admin/drivers/${order.driverId}`}>
+                        {driver?.name ?? "Not Assigned"}
+                      </Link>
+                    )
+                  }
+                </div>
+              )
+              : null
+            }
             <div className="mb-12 text-blueGray-600"></div>
           </div>
         </div>
