@@ -111,7 +111,7 @@ function EditPrice({ order }) {
   const firestore = useFirestore();
   const save = async () => {
     await firestore.doc(`fuelOrders/${id}`).update({
-      deliveryPrice: delivery,
+      deliveryPrice: parseInt(delivery),
       status: "unconfirmed",
     });
     history.push(`/admin/orders/id/${id}`);
