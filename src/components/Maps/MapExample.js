@@ -1,16 +1,65 @@
 import React from "react";
+import firebase from "firebase";
+
+
+async function getMarker(map, google ) {
+  const snapshot = await firebase.firestore().collection('fuelOrders').get()
+  var orders = snapshot.docs.map(doc => doc.data());
+  var markersList = []
+  for (let i = 0 ; i < orders.length; i++) {
+    var lat = orders[i].dropLocation._lat 
+    var long = orders[i].dropLocation._long
+    const latlong = new google.maps.LatLng(lat, long);
+    const marker = new google.maps.Marker({position: latlong, map: map, animation: google.maps.Animation.DROP, title: "Notus React!",});
+    if(orders[i].status == "finished" ){
+      marker.setIcon('http://maps.google.com/mapfiles/ms/icons/green-dot.png')
+    }
+    else if(orders[i].status == "rejected" ){
+      marker.setIcon('http://maps.google.com/mapfiles/ms/icons/red-dot.png')
+    }
+    else if(orders[i].status == "in-progress" ){
+      marker.setIcon('http://maps.google.com/mapfiles/ms/icons/yellow-dot.png')
+    }
+    else {
+      marker.setIcon('http://maps.google.com/mapfiles/ms/icons/blue-dot.png')
+    }
+    marker.addListener("click", () => {
+      map.setZoom(13);
+      map.setCenter(marker.getPosition());
+    });
+
+
+
+    
+    markersList.push(marker)
+
+  }
+
+  return markersList
+
+}
 
 function MapExample() {
+
+
+  /////////////////////
+  // getListOfOrders
+  
+  //
+  ///////////////////////////////////
+
+
   const mapRef = React.useRef(null);
   React.useEffect(() => {
     let google = window.google;
     let map = mapRef.current;
-    let lat = "40.748817";
-    let lng = "-73.985428";
-    const myLatlng = new google.maps.LatLng(lat, lng);
+    let latBahri = "15.6298";
+    let lngBahri = "32.5424";
+    const myLatlngB = new google.maps.LatLng(latBahri, lngBahri);
+    
     const mapOptions = {
-      zoom: 12,
-      center: myLatlng,
+      zoom: 11,
+      center: myLatlngB,
       scrollwheel: false,
       zoomControl: true,
       styles: [
@@ -59,24 +108,9 @@ function MapExample() {
 
     map = new google.maps.Map(map, mapOptions);
 
-    const marker = new google.maps.Marker({
-      position: myLatlng,
-      map: map,
-      animation: google.maps.Animation.DROP,
-      title: "Notus React!",
-    });
 
-    const contentString =
-      '<div class="info-window-content"><h2>Notus React</h2>' +
-      "<p>A free Admin for Tailwind CSS, React, and React Hooks.</p></div>";
+    getMarker(map, google)
 
-    const infowindow = new google.maps.InfoWindow({
-      content: contentString,
-    });
-
-    google.maps.event.addListener(marker, "click", function () {
-      infowindow.open(map, marker);
-    });
   });
   return (
     <>
